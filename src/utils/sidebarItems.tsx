@@ -1,15 +1,11 @@
 import { BsPatchQuestion } from 'react-icons/bs';
 import { TSidebarItem } from './generateSidebarItems';
-import { LuClipboardList, LuLayoutDashboard } from 'react-icons/lu';
-import { TbBook } from 'react-icons/tb';
-import { PiChefHat, PiSteeringWheelLight } from 'react-icons/pi';
-import { HiOutlineClipboardDocumentList } from 'react-icons/hi2';
-import { MdOutlineCategory } from 'react-icons/md';
-import { GiSandsOfTime } from 'react-icons/gi';
-import { BiUser } from 'react-icons/bi';
-import { CiCreditCard1, CiSettings, CiStar } from 'react-icons/ci';
-import { RiRefund2Fill } from 'react-icons/ri';
-import { IoCloudUploadOutline } from 'react-icons/io5';
+import { LuClipboardList, LuLayoutDashboard, LuUserCheck, LuUserCog } from 'react-icons/lu';
+import { TbBook, TbUsers } from 'react-icons/tb';
+import { MdOutlineCategory, MdOutlinePayments } from 'react-icons/md';
+import { IoCalendarOutline, IoSettingsOutline } from 'react-icons/io5';
+import { FaRegCircleQuestion } from 'react-icons/fa6';
+import { PiImagesSquare } from 'react-icons/pi';
 
 const sidebarItems: TSidebarItem[] = [
     {
@@ -19,16 +15,10 @@ const sidebarItems: TSidebarItem[] = [
         icon: <LuLayoutDashboard size={24} />,
     },
     {
-        key: 'control-publish',
-        label: 'Control Publish',
-        path: 'control-publish',
-        icon: <IoCloudUploadOutline size={24} />,
-    },
-    {
-        key: 'orders',
-        label: 'Orders',
-        path: 'orders',
-        icon: <HiOutlineClipboardDocumentList size={24} />,
+        key: 'banners',
+        label: 'Banners',
+        path: 'banners',
+        icon: <PiImagesSquare size={24} />,
     },
     {
         key: 'categories',
@@ -37,53 +27,47 @@ const sidebarItems: TSidebarItem[] = [
         icon: <MdOutlineCategory size={24} />,
     },
     {
-        key: 'waiting-list',
-        label: 'Waiting List',
-        path: 'waiting-list',
-        icon: <GiSandsOfTime size={24} />,
-    },
-    {
         key: 'chefs',
-        label: 'Chefs',
+        label: 'Organizers',
         path: 'chefs',
-        icon: <PiChefHat size={24} />,
+        icon: <LuUserCog size={24} />,
     },
     {
         key: 'users',
         label: 'Customers',
         path: 'users',
-        icon: <BiUser size={24} />,
+        icon: <TbUsers size={24} />,
     },
     {
         key: 'drivers',
-        label: 'Drivers',
+        label: 'Subscribers',
         path: 'drivers',
-        icon: <PiSteeringWheelLight size={24} />,
+        icon: <LuUserCheck size={24} />,
     },
     {
-        key: 'reviews',
-        label: 'Reviews',
-        path: 'reviews',
-        icon: <CiStar size={24} />,
+        key: 'orders',
+        label: 'Bookings',
+        path: 'orders',
+        icon: <IoCalendarOutline size={24} />,
     },
     {
-        key: 'transactions',
-        label: 'Transactions',
-        path: 'transactions',
-        icon: <CiCreditCard1 size={24} />,
-    },
-    {
-        key: 'refund-requests',
-        label: 'Refund Requests',
-        path: 'refund-requests',
-        icon: <RiRefund2Fill size={24} />,
+        key: 'subscriptions',
+        label: 'Subscriptions',
+        path: 'subscriptions',
+        icon: <MdOutlinePayments size={24} />,
     },
     {
         key: 'settings',
         label: 'Settings',
         path: 'settings',
-        icon: <CiSettings size={24} />,
+        icon: <IoSettingsOutline size={24} />,
         children: [
+            {
+                key: 'faq',
+                label: 'FAQs',
+                path: 'faq',
+                icon: <FaRegCircleQuestion size={20} />,
+            },
             {
                 key: 'about-us',
                 label: 'About us',

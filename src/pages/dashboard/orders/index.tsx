@@ -347,7 +347,7 @@ export default function Orders({ dashboard }: { dashboard?: boolean }) {
         <>
             <div className="rounded-lg shadow-sm border border-gray-200 p-4">
                 <div className="flex items-center justify-between mb-4">
-                    <HeaderTitle title="Orders" />
+                    <HeaderTitle title="Bookings" />
                     <ConfigProvider
                         theme={{
                             token: {

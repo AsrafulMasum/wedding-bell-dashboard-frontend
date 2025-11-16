@@ -1,14 +1,13 @@
-import { Button, ConfigProvider, Input, Select, Table, Tabs } from 'antd';
+import { Button, ConfigProvider, Input, Select, Table } from 'antd';
 import { useState } from 'react';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
 import { CiCircleInfo, CiLock, CiUnlock } from 'react-icons/ci';
 import { MdOutlineDeleteOutline } from 'react-icons/md';
+import { User } from '../../../types/types';
 import UserModal from '../users/UserModal';
 import BlockModal from '../users/BlockModal';
-import { DriverTypes } from '../../../types/types';
 
 const { Option } = Select;
-const { TabPane } = Tabs;
 
 const canadianCities = [
     'Toronto',
@@ -35,82 +34,133 @@ const canadianCities = [
     'Sherbrooke',
     'Guelph',
     'Kingston',
-    'Forfield',
-    'Noperville',
-    'Orange',
-    'Toledo',
-    'Austin',
+    'Forfield', // From your original data
+    'Noperville', // From your original data
+    'Orange', // From your original data
+    'Toledo', // From your original data
+    'Austin', // From your original data
 ];
 
-const userData: DriverTypes[] = [
+const userData: User[] = [
     {
         key: '1',
-        serialId: 'DRV-1001',
+        serialId: 'USR-1001',
         userName: 'John Doe',
         email: 'john.doe@example.com',
-        address: '123 King Street W, Apt 12',
+        address: '123 Bay Street, Apt 204',
         city: 'Toronto',
-        vehicleType: 'Car',
-        licenseNo: 'ON-2345678',
-        files: 'Profile, NID, License',
+        createdAt: '2025-10-12',
+        country: 'Canada',
         status: 'active',
     },
     {
         key: '2',
-        serialId: 'DRV-1002',
+        serialId: 'USR-1002',
         userName: 'Sarah Johnson',
         email: 'sarah.johnson@example.com',
-        address: '58 W 5th Ave',
+        address: '45 Granville Ave',
         city: 'Vancouver',
-        vehicleType: 'Motorbike',
-        licenseNo: 'BC-7865432',
-        files: 'Profile, NID',
+        createdAt: '2025-09-21',
+        country: 'Canada',
         status: 'inactive',
     },
-    // ... (rest of your data remains unchanged)
-];
-
-// ✅ New dummy request data
-const driverRequests = [
     {
-        key: '1',
-        serialId: 'REQ-2001',
-        userName: 'Mark Stone',
-        email: 'mark.stone@example.com',
-        address: '55 York St',
-        city: 'Toronto',
-        vehicleType: 'Car',
-        licenseNo: 'ON-989898',
-        files: 'Profile, License',
-        status: 'Pending',
+        key: '3',
+        serialId: 'USR-1003',
+        userName: 'Michael Brown',
+        email: 'michael.brown@example.com',
+        address: '78 Crescent Rd, Suite 10',
+        city: 'Montreal',
+        createdAt: '2025-08-30',
+        country: 'Canada',
+        status: 'active',
     },
     {
-        key: '2',
-        serialId: 'REQ-2002',
-        userName: 'Ella Green',
-        email: 'ella.green@example.com',
-        address: '18 West St',
-        city: 'Vancouver',
-        vehicleType: 'Motorbike',
-        licenseNo: 'BC-223344',
-        files: 'Profile, NID',
-        status: 'Approved',
+        key: '4',
+        serialId: 'USR-1004',
+        userName: 'Emily Davis',
+        email: 'emily.davis@example.com',
+        address: '210 9th Ave SE',
+        city: 'Calgary',
+        createdAt: '2025-07-14',
+        country: 'Canada',
+        status: 'inactive',
+    },
+    {
+        key: '5',
+        serialId: 'USR-1005',
+        userName: 'Robert Wilson',
+        email: 'robert.wilson@example.com',
+        address: '14 Elgin St, Downtown',
+        city: 'Ottawa',
+        createdAt: '2025-06-03',
+        country: 'Canada',
+        status: 'active',
+    },
+    {
+        key: '6',
+        serialId: 'USR-1006',
+        userName: 'Olivia Martin',
+        email: 'olivia.martin@example.com',
+        address: '520 Jasper Ave NW',
+        city: 'Edmonton',
+        createdAt: '2025-05-26',
+        country: 'Canada',
+        status: 'active',
+    },
+    {
+        key: '7',
+        serialId: 'USR-1007',
+        userName: 'Daniel Thompson',
+        email: 'daniel.thompson@example.com',
+        address: '321 Broadway Ave',
+        city: 'Winnipeg',
+        createdAt: '2025-04-17',
+        country: 'Canada',
+        status: 'inactive',
+    },
+    {
+        key: '8',
+        serialId: 'USR-1008',
+        userName: 'Sophia White',
+        email: 'sophia.white@example.com',
+        address: '55 Rue Saint-Jean',
+        city: 'Quebec City',
+        createdAt: '2025-03-08',
+        country: 'Canada',
+        status: 'active',
+    },
+    {
+        key: '9',
+        serialId: 'USR-1009',
+        userName: 'James Anderson',
+        email: 'james.anderson@example.com',
+        address: '200 Barrington St',
+        city: 'Halifax',
+        createdAt: '2025-02-22',
+        country: 'Canada',
+        status: 'inactive',
+    },
+    {
+        key: '10',
+        serialId: 'USR-1010',
+        userName: 'Ava Taylor',
+        email: 'ava.taylor@example.com',
+        address: '99 Main St W',
+        city: 'Hamilton',
+        createdAt: '2025-01-15',
+        country: 'Canada',
+        status: 'active',
     },
 ];
-
-const statusColorMap = {
-    Pending: { color: '#D48806', bg: '#F7F1CC' },
-    Rejected: { color: '#FF4D4F', bg: '#FFD8D7' },
-    Approved: { color: '#52C41A', bg: '#D9F2CD' },
-};
 
 export default function Drivers({ dashboard }: { dashboard?: boolean }) {
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const [selectedUser, setSelectedUser] = useState<DriverTypes | null>(null);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [isBlockModalVisible, setIsBlockModalVisible] = useState<boolean>(false);
-    const [userToBlock, setUserToBlock] = useState<DriverTypes | null>(null);
+    const [userToBlock, setUserToBlock] = useState<User | null>(null);
 
-    const showUserDetails = (user: DriverTypes) => {
+    const showUserDetails = (user: User) => {
         setSelectedUser(user);
         setIsModalVisible(true);
     };
@@ -120,12 +170,13 @@ export default function Drivers({ dashboard }: { dashboard?: boolean }) {
         setSelectedUser(null);
     };
 
-    const showBlockModal = (user: DriverTypes) => {
+    const showBlockModal = (user: User) => {
         setUserToBlock(user);
         setIsBlockModalVisible(true);
     };
 
     const handleBlockConfirm = () => {
+        // Handle block user logic here
         console.log('Blocking user:', userToBlock);
         setIsBlockModalVisible(false);
         setUserToBlock(null);
@@ -136,7 +187,6 @@ export default function Drivers({ dashboard }: { dashboard?: boolean }) {
         setUserToBlock(null);
     };
 
-    // Existing columns unchanged
     const columns = [
         {
             title: 'Serial ID',
@@ -166,7 +216,17 @@ export default function Drivers({ dashboard }: { dashboard?: boolean }) {
             dataIndex: 'city',
             key: 'city',
             responsive: ['lg'] as any,
-            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => (
+            filterDropdown: ({
+                setSelectedKeys,
+                selectedKeys,
+                confirm,
+                clearFilters,
+            }: {
+                setSelectedKeys?: (keys: React.Key[]) => void;
+                selectedKeys?: React.Key[];
+                confirm?: () => void;
+                clearFilters?: () => void;
+            }) => (
                 <div style={{ padding: 8 }}>
                     <Select
                         placeholder="Select a Canadian city"
@@ -201,31 +261,25 @@ export default function Drivers({ dashboard }: { dashboard?: boolean }) {
                     </div>
                 </div>
             ),
-            onFilter: (value: boolean | React.Key, record: DriverTypes) => record.city === value,
+            onFilter: (value: boolean | React.Key, record: User) => record.city === value,
             render: (city: string) => city,
         },
         {
-            title: 'Vehicle Type',
-            dataIndex: 'vehicleType',
-            key: 'vehicleType',
+            title: 'Registration Date',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
             responsive: ['sm'] as any,
         },
         {
-            title: 'License No.',
-            dataIndex: 'licenseNo',
-            key: 'licenseNo',
-            responsive: ['sm'] as any,
-        },
-        {
-            title: 'Uploaded Files',
-            dataIndex: 'files',
-            key: 'files',
+            title: 'Country',
+            dataIndex: 'country',
+            key: 'country',
             responsive: ['sm'] as any,
         },
         {
             title: 'Action',
             key: 'action',
-            render: (_: any, record: DriverTypes) => (
+            render: (_: any, record: User) => (
                 <div className="flex gap-2">
                     <Button
                         type="text"
@@ -233,150 +287,7 @@ export default function Drivers({ dashboard }: { dashboard?: boolean }) {
                         className="text-gray-500 hover:text-primary"
                         onClick={() => showUserDetails(record)}
                     />
-                    <Button
-                        type="text"
-                        icon={record?.status == 'active' ? <CiLock size={24} /> : <CiUnlock size={24} />}
-                        className={
-                            record?.status == 'active'
-                                ? 'text-gray-500 hover:!text-red-500'
-                                : 'hover:!text-gray-500 !text-red-500'
-                        }
-                        onClick={() => showBlockModal(record)}
-                    />
-                    <Button
-                        type="text"
-                        icon={<MdOutlineDeleteOutline size={24} />}
-                        className={'text-red-400 hover:!text-red-500'}
-                        onClick={() => showBlockModal(record)}
-                    />
-                </div>
-            ),
-        },
-    ];
 
-    const requestColumns = [
-        {
-            title: 'Serial ID',
-            dataIndex: 'serialId',
-            key: 'serialId',
-            responsive: ['sm'] as any,
-        },
-        {
-            title: 'Name',
-            dataIndex: 'userName',
-            key: 'userName',
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-            responsive: ['md'] as any,
-        },
-        {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
-            responsive: ['lg'] as any,
-        },
-        {
-            title: 'City',
-            dataIndex: 'city',
-            key: 'city',
-            responsive: ['lg'] as any,
-            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => (
-                <div style={{ padding: 8 }}>
-                    <Select
-                        placeholder="Select a Canadian city"
-                        value={selectedKeys?.[0] ?? undefined}
-                        style={{ width: 200 }}
-                        onChange={(value) => {
-                            setSelectedKeys?.(value ? [value] : []);
-                            confirm?.();
-                        }}
-                        allowClear
-                        showSearch
-                        filterOption={(input, option) =>
-                            (option?.children as unknown as string).toLowerCase().includes(input.toLowerCase())
-                        }
-                    >
-                        {canadianCities?.map((city) => (
-                            <Option key={city} value={city}>
-                                {city}
-                            </Option>
-                        ))}
-                    </Select>
-                    <div style={{ marginTop: 8 }}>
-                        <a
-                            onClick={() => {
-                                clearFilters?.();
-                                confirm?.();
-                            }}
-                            style={{ width: 90, marginRight: 8 }}
-                        >
-                            Reset
-                        </a>
-                    </div>
-                </div>
-            ),
-            onFilter: (value: boolean | React.Key, record: DriverTypes) => record.city === value,
-            render: (city: string) => city,
-        },
-        {
-            title: 'Vehicle Type',
-            dataIndex: 'vehicleType',
-            key: 'vehicleType',
-            responsive: ['sm'] as any,
-        },
-        {
-            title: 'License No.',
-            dataIndex: 'licenseNo',
-            key: 'licenseNo',
-            responsive: ['sm'] as any,
-        },
-        {
-            title: 'Uploaded Files',
-            dataIndex: 'files',
-            key: 'files',
-            responsive: ['sm'] as any,
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status: DriverTypes['status'], record: DriverTypes) => {
-                const key = status as keyof typeof statusColorMap;
-                const currentStyle =
-                    status in statusColorMap
-                        ? statusColorMap[key]
-                        : {
-                              color: '#595959',
-                              bg: '#FAFAFA',
-                          };
-
-                return (
-                    <p
-                        className="capitalize px-1 py-0.5 text-center rounded-lg"
-                        style={{
-                            color: currentStyle.color,
-                            backgroundColor: currentStyle.bg,
-                        }}
-                    >
-                        {record?.status}
-                    </p>
-                );
-            },
-        },
-        {
-            title: 'Action',
-            key: 'action',
-            render: (_: any, record: DriverTypes) => (
-                <div className="flex gap-2">
-                    <Button
-                        type="text"
-                        icon={<CiCircleInfo size={24} />}
-                        className="text-gray-500 hover:text-primary"
-                        onClick={() => showUserDetails(record)}
-                    />
                     <Button
                         type="text"
                         icon={record?.status == 'active' ? <CiLock size={24} /> : <CiUnlock size={24} />}
@@ -401,62 +312,28 @@ export default function Drivers({ dashboard }: { dashboard?: boolean }) {
     return (
         <>
             <div className="rounded-lg shadow-sm border border-gray-200 p-4">
-                <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
-                    <Tabs defaultActiveKey="1">
-                        {/* 🧍‍♂️ Existing Drivers Tab (unchanged) */}
-                        <TabPane tab="Drivers" key="1">
-                            <div className="flex items-center justify-between mb-4">
-                                <HeaderTitle title="Users" />
-                                <Input
-                                    placeholder="Search"
-                                    style={{ width: 280, height: 40 }}
-                                    prefix={<i className="bi bi-search"></i>}
-                                />
-                            </div>
-                            <ConfigProvider
-                                theme={{
-                                    token: {
-                                        colorPrimary: '#C8A284',
-                                    },
-                                }}
-                            >
-                                <Table
-                                    columns={columns}
-                                    dataSource={userData}
-                                    pagination={dashboard ? false : { pageSize: 9, total: userData.length }}
-                                    className="custom-table"
-                                />
-                            </ConfigProvider>
-                        </TabPane>
-
-                        {/* 🆕 New Requests Tab */}
-                        <TabPane tab="Requests" key="2">
-                            <div className="flex items-center justify-between mb-4">
-                                <HeaderTitle title="Driver Requests" />
-                                <Input
-                                    placeholder="Search Requests"
-                                    style={{ width: 280, height: 40 }}
-                                    prefix={<i className="bi bi-search"></i>}
-                                />
-                            </div>
-                            <ConfigProvider
-                                theme={{
-                                    token: {
-                                        colorPrimary: '#C8A284',
-                                    },
-                                }}
-                            >
-                                <Table<any>
-                                    columns={requestColumns}
-                                    dataSource={driverRequests}
-                                    pagination={{
-                                        pageSize: 9,
-                                        total: driverRequests.length,
-                                    }}
-                                />
-                            </ConfigProvider>
-                        </TabPane>
-                    </Tabs>
+                <div className="flex items-center justify-between mb-4">
+                    <HeaderTitle title="Subscribers" />
+                    <Input
+                        placeholder="Search"
+                        className=""
+                        style={{ width: 280, height: 40 }}
+                        prefix={<i className="bi bi-search"></i>}
+                    />
+                </div>
+                <ConfigProvider
+                    theme={{
+                        token: {
+                            colorPrimary: '#C8A284',
+                        },
+                    }}
+                >
+                    <Table
+                        columns={columns}
+                        dataSource={userData}
+                        pagination={dashboard ? false : { pageSize: 9, total: userData.length }}
+                        className="custom-table"
+                    />
                 </ConfigProvider>
             </div>
 

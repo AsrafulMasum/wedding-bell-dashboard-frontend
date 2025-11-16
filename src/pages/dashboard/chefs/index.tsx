@@ -1,14 +1,13 @@
-import { Button, ConfigProvider, Input, Select, Table, Tabs, Modal } from 'antd';
+import { Button, ConfigProvider, Input, Select, Table } from 'antd';
 import { useState } from 'react';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
 import { CiCircleInfo, CiLock, CiUnlock } from 'react-icons/ci';
 import { MdOutlineDeleteOutline } from 'react-icons/md';
+import { User } from '../../../types/types';
 import UserModal from '../users/UserModal';
 import BlockModal from '../users/BlockModal';
-import { ChefsTypes } from '../../../types/types';
 
 const { Option } = Select;
-const { TabPane } = Tabs;
 
 const canadianCities = [
     'Toronto',
@@ -35,170 +34,133 @@ const canadianCities = [
     'Sherbrooke',
     'Guelph',
     'Kingston',
-    'Forfield',
-    'Noperville',
-    'Orange',
-    'Toledo',
-    'Austin',
+    'Forfield', // From your original data
+    'Noperville', // From your original data
+    'Orange', // From your original data
+    'Toledo', // From your original data
+    'Austin', // From your original data
 ];
 
-const chefData = [
+const userData: User[] = [
     {
-        serialId: 'DRV-001',
+        key: '1',
+        serialId: 'USR-1001',
+        userName: 'John Doe',
+        email: 'john.doe@example.com',
+        address: '123 Bay Street, Apt 204',
+        city: 'Toronto',
+        createdAt: '2025-10-12',
+        country: 'Canada',
+        status: 'active',
+    },
+    {
+        key: '2',
+        serialId: 'USR-1002',
+        userName: 'Sarah Johnson',
+        email: 'sarah.johnson@example.com',
+        address: '45 Granville Ave',
+        city: 'Vancouver',
+        createdAt: '2025-09-21',
+        country: 'Canada',
+        status: 'inactive',
+    },
+    {
+        key: '3',
+        serialId: 'USR-1003',
+        userName: 'Michael Brown',
+        email: 'michael.brown@example.com',
+        address: '78 Crescent Rd, Suite 10',
+        city: 'Montreal',
+        createdAt: '2025-08-30',
+        country: 'Canada',
+        status: 'active',
+    },
+    {
+        key: '4',
+        serialId: 'USR-1004',
+        userName: 'Emily Davis',
+        email: 'emily.davis@example.com',
+        address: '210 9th Ave SE',
+        city: 'Calgary',
+        createdAt: '2025-07-14',
+        country: 'Canada',
+        status: 'inactive',
+    },
+    {
+        key: '5',
+        serialId: 'USR-1005',
+        userName: 'Robert Wilson',
+        email: 'robert.wilson@example.com',
+        address: '14 Elgin St, Downtown',
+        city: 'Ottawa',
+        createdAt: '2025-06-03',
+        country: 'Canada',
+        status: 'active',
+    },
+    {
+        key: '6',
+        serialId: 'USR-1006',
+        userName: 'Olivia Martin',
+        email: 'olivia.martin@example.com',
+        address: '520 Jasper Ave NW',
+        city: 'Edmonton',
+        createdAt: '2025-05-26',
+        country: 'Canada',
+        status: 'active',
+    },
+    {
+        key: '7',
+        serialId: 'USR-1007',
+        userName: 'Daniel Thompson',
+        email: 'daniel.thompson@example.com',
+        address: '321 Broadway Ave',
+        city: 'Winnipeg',
+        createdAt: '2025-04-17',
+        country: 'Canada',
+        status: 'inactive',
+    },
+    {
+        key: '8',
+        serialId: 'USR-1008',
+        userName: 'Sophia White',
+        email: 'sophia.white@example.com',
+        address: '55 Rue Saint-Jean',
+        city: 'Quebec City',
+        createdAt: '2025-03-08',
+        country: 'Canada',
+        status: 'active',
+    },
+    {
+        key: '9',
+        serialId: 'USR-1009',
         userName: 'James Anderson',
         email: 'james.anderson@example.com',
-        address: '123 Maple Street',
-        city: 'Toronto',
-        createdAt: '2025-01-15',
-        totalOrder: 120,
-        revenue: 5400,
-        status: 'active',
-    },
-    {
-        serialId: 'DRV-002',
-        userName: 'Sophia Turner',
-        email: 'sophia.turner@example.com',
-        address: '78 Wellington Ave',
-        city: 'Vancouver',
-        createdAt: '2025-02-10',
-        totalOrder: 87,
-        revenue: 3600,
-        status: 'inactive',
-    },
-    {
-        serialId: 'DRV-003',
-        userName: 'Liam Brown',
-        email: 'liam.brown@example.com',
-        address: '45 Elm Road',
-        city: 'Calgary',
-        createdAt: '2025-03-05',
-        totalOrder: 142,
-        revenue: 7100,
-        status: 'active',
-    },
-    {
-        serialId: 'DRV-004',
-        userName: 'Olivia Wilson',
-        email: 'olivia.wilson@example.com',
-        address: '256 King Street West',
-        city: 'Ottawa',
-        createdAt: '2025-04-12',
-        totalOrder: 75,
-        revenue: 2900,
-        status: 'inactive',
-    },
-    {
-        serialId: 'DRV-005',
-        userName: 'Noah Smith',
-        email: 'noah.smith@example.com',
-        address: '98 Queen Street',
-        city: 'Montreal',
-        createdAt: '2025-05-20',
-        totalOrder: 102,
-        revenue: 4700,
-        status: 'active',
-    },
-    {
-        serialId: 'DRV-006',
-        userName: 'Emma Johnson',
-        email: 'emma.johnson@example.com',
-        address: '12 Pine Avenue',
-        city: 'Edmonton',
-        createdAt: '2025-06-08',
-        totalOrder: 91,
-        revenue: 4100,
-        status: 'active',
-    },
-    {
-        serialId: 'DRV-007',
-        userName: 'William Davis',
-        email: 'william.davis@example.com',
-        address: '77 Spruce Street',
-        city: 'Winnipeg',
-        createdAt: '2025-07-01',
-        totalOrder: 134,
-        revenue: 6200,
-        status: 'inactive',
-    },
-    {
-        serialId: 'DRV-008',
-        userName: 'Ava Martinez',
-        email: 'ava.martinez@example.com',
-        address: '31 Birch Road',
+        address: '200 Barrington St',
         city: 'Halifax',
-        createdAt: '2025-07-22',
-        totalOrder: 66,
-        revenue: 2700,
-        status: 'active',
-    },
-    {
-        serialId: 'DRV-009',
-        userName: 'Lucas Garcia',
-        email: 'lucas.garcia@example.com',
-        address: '90 King Edward Blvd',
-        city: 'Quebec City',
-        createdAt: '2025-08-11',
-        totalOrder: 110,
-        revenue: 4800,
+        createdAt: '2025-02-22',
+        country: 'Canada',
         status: 'inactive',
     },
     {
-        serialId: 'DRV-010',
-        userName: 'Mia Rodriguez',
-        email: 'mia.rodriguez@example.com',
-        address: '54 Richmond Street',
-        city: 'Regina',
-        createdAt: '2025-09-02',
-        totalOrder: 99,
-        revenue: 3900,
+        key: '10',
+        serialId: 'USR-1010',
+        userName: 'Ava Taylor',
+        email: 'ava.taylor@example.com',
+        address: '99 Main St W',
+        city: 'Hamilton',
+        createdAt: '2025-01-15',
+        country: 'Canada',
         status: 'active',
     },
 ];
 
-// New dummy request data
-const requestData = [
-    {
-        key: 1,
-        name: 'John Smith',
-        email: 'john.smith@example.com',
-        cuisineType: 'Italian',
-        address: '123 King Street, Toronto',
-        zipCode: 'M5H 2N2',
-        certificate: '/certificates/sample1.pdf',
-        status: 'Pending',
-    },
-    {
-        key: 2,
-        name: 'Emily Davis',
-        email: 'emily.davis@example.com',
-        cuisineType: 'Indian',
-        address: '56 Queen Ave, Vancouver',
-        zipCode: 'V6B 3H7',
-        certificate: '/certificates/sample2.pdf',
-        status: 'Approved',
-    },
-];
-
-const statusColorMap = {
-    Pending: { color: '#D48806', bg: '#F7F1CC' },
-    Rejected: { color: '#FF4D4F', bg: '#FFD8D7' },
-    Approved: { color: '#52C41A', bg: '#D9F2CD' },
-};
-
-export default function Chefs({ dashboard }: { dashboard?: boolean }) {
+export default function Organizers({ dashboard }: { dashboard?: boolean }) {
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const [selectedUser, setSelectedUser] = useState<ChefsTypes | null>(null);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [isBlockModalVisible, setIsBlockModalVisible] = useState<boolean>(false);
-    const [userToBlock, setUserToBlock] = useState<ChefsTypes | null>(null);
-    const [pdfModalVisible, setPdfModalVisible] = useState(false);
-    const [pdfUrl, setPdfUrl] = useState('');
+    const [userToBlock, setUserToBlock] = useState<User | null>(null);
 
-    const showPdfModal = (url: string) => {
-        setPdfUrl(url);
-        setPdfModalVisible(true);
-    };
-
-    const showUserDetails = (user: ChefsTypes) => {
+    const showUserDetails = (user: User) => {
         setSelectedUser(user);
         setIsModalVisible(true);
     };
@@ -208,12 +170,13 @@ export default function Chefs({ dashboard }: { dashboard?: boolean }) {
         setSelectedUser(null);
     };
 
-    const showBlockModal = (user: ChefsTypes) => {
+    const showBlockModal = (user: User) => {
         setUserToBlock(user);
         setIsBlockModalVisible(true);
     };
 
     const handleBlockConfirm = () => {
+        // Handle block user logic here
         console.log('Blocking user:', userToBlock);
         setIsBlockModalVisible(false);
         setUserToBlock(null);
@@ -298,7 +261,7 @@ export default function Chefs({ dashboard }: { dashboard?: boolean }) {
                     </div>
                 </div>
             ),
-            onFilter: (value: boolean | React.Key, record: ChefsTypes) => record.city === value,
+            onFilter: (value: boolean | React.Key, record: User) => record.city === value,
             render: (city: string) => city,
         },
         {
@@ -308,21 +271,15 @@ export default function Chefs({ dashboard }: { dashboard?: boolean }) {
             responsive: ['sm'] as any,
         },
         {
-            title: 'Total Order',
-            dataIndex: 'totalOrder',
-            key: 'totalOrder',
-            responsive: ['sm'] as any,
-        },
-        {
-            title: 'Revenue',
-            dataIndex: 'revenue',
-            key: 'revenue',
+            title: 'Country',
+            dataIndex: 'country',
+            key: 'country',
             responsive: ['sm'] as any,
         },
         {
             title: 'Action',
             key: 'action',
-            render: (_: any, record: ChefsTypes) => (
+            render: (_: any, record: User) => (
                 <div className="flex gap-2">
                     <Button
                         type="text"
@@ -352,100 +309,34 @@ export default function Chefs({ dashboard }: { dashboard?: boolean }) {
         },
     ];
 
-    const requestColumns = [
-        { title: 'Serial No', dataIndex: 'key', key: 'key' },
-        { title: 'Name', dataIndex: 'name', key: 'name' },
-        { title: 'Email', dataIndex: 'email', key: 'email' },
-        { title: 'Cuisine Type', dataIndex: 'cuisineType', key: 'cuisineType' },
-        { title: 'Address', dataIndex: 'address', key: 'address' },
-        { title: 'Zip Code', dataIndex: 'zipCode', key: 'zipCode' },
-        {
-            title: 'Certificate',
-            dataIndex: 'certificate',
-            key: 'certificate',
-            render: (url: string) => (
-                <Button type="link" onClick={() => showPdfModal(url)}>
-                    View PDF
-                </Button>
-            ),
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status: ChefsTypes['status'], record: ChefsTypes) => {
-                const key = status as keyof typeof statusColorMap;
-                const currentStyle =
-                    status in statusColorMap
-                        ? statusColorMap[key]
-                        : {
-                              color: '#595959',
-                              bg: '#FAFAFA',
-                          };
-
-                return (
-                    <p
-                        className="capitalize px-1 py-0.5 text-center rounded-lg"
-                        style={{
-                            color: currentStyle.color,
-                            backgroundColor: currentStyle.bg,
-                        }}
-                    >
-                        {record?.status}
-                    </p>
-                );
-            },
-        },
-        {
-            title: 'Action',
-            key: 'action',
-            render: () => (
-                <div className="flex gap-2">
-                    <Button type="primary">Approve</Button>
-                    <Button danger>Reject</Button>
-                </div>
-            ),
-        },
-    ];
-
     return (
         <>
-            <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
-                <Tabs defaultActiveKey="1">
-                    <TabPane tab="Chefs" key="1">
-                        {/* 👇 Your original table untouched */}
-                        <div className="rounded-lg shadow-sm border border-gray-200 p-4">
-                            <div className="flex items-center justify-between mb-4">
-                                <HeaderTitle title="Users" />
-                                <Input
-                                    placeholder="Search"
-                                    style={{ width: 280, height: 40 }}
-                                    prefix={<i className="bi bi-search"></i>}
-                                />
-                            </div>
-                            <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
-                                <Table
-                                    columns={columns}
-                                    dataSource={chefData}
-                                    pagination={dashboard ? false : { pageSize: 9, total: chefData.length }}
-                                />
-                            </ConfigProvider>
-                        </div>
-                    </TabPane>
+            <div className="rounded-lg shadow-sm border border-gray-200 p-4">
+                <div className="flex items-center justify-between mb-4">
+                    <HeaderTitle title="Organizers" />
+                    <Input
+                        placeholder="Search"
+                        className=""
+                        style={{ width: 280, height: 40 }}
+                        prefix={<i className="bi bi-search"></i>}
+                    />
+                </div>
+                <ConfigProvider
+                    theme={{
+                        token: {
+                            colorPrimary: '#C8A284',
+                        },
+                    }}
+                >
+                    <Table
+                        columns={columns}
+                        dataSource={userData}
+                        pagination={dashboard ? false : { pageSize: 9, total: userData.length }}
+                        className="custom-table"
+                    />
+                </ConfigProvider>
+            </div>
 
-                    {/* ✅ New Request Tab */}
-                    <TabPane tab="Requests" key="2">
-                        <div className="rounded-lg shadow-sm border border-gray-200 p-4">
-                            <HeaderTitle title="Chef Requests" />
-                            <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
-                                <Table columns={requestColumns} dataSource={requestData} pagination={{ pageSize: 9 }} />
-                            </ConfigProvider>
-                        </div>
-                    </TabPane>
-                </Tabs>
-            </ConfigProvider>
-
-            {/* Modals */}
             <UserModal
                 isModalVisible={isModalVisible}
                 handleModalClose={handleModalClose}
@@ -458,16 +349,6 @@ export default function Chefs({ dashboard }: { dashboard?: boolean }) {
                 handleBlockConfirm={handleBlockConfirm}
                 isUserBlocked={userToBlock?.status !== 'active'}
             />
-
-            <Modal
-                open={pdfModalVisible}
-                onCancel={() => setPdfModalVisible(false)}
-                footer={null}
-                width={800}
-                title="Chef Certificate"
-            >
-                <iframe src={pdfUrl} width="100%" height="600px" style={{ border: 'none' }} />
-            </Modal>
         </>
     );
 }

@@ -26,7 +26,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #59a817;
+    background: #C8A284;
     border-radius: 10px;
 }
 
@@ -44,5 +44,5 @@
 
 /* sidebar */
 .ant-menu-submenu-selected > .ant-menu-submenu-title {
-    color: #59a817 !important;
+    color: #C8A284 !important;
 }

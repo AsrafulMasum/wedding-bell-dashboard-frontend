@@ -534,7 +534,7 @@ export default function Transactions({ dashboard }: { dashboard?: boolean }) {
                             : 'Driver Transactions'
                     }
                 />
-                <ConfigProvider theme={{ token: { colorPrimary: '#59A817' } }}>
+                <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
                     <Input
                         placeholder="Search"
                         style={{ width: 280, height: 40 }}
@@ -543,7 +543,7 @@ export default function Transactions({ dashboard }: { dashboard?: boolean }) {
                 </ConfigProvider>
             </div>
 
-            <ConfigProvider theme={{ token: { colorPrimary: '#59A817' } }}>
+            <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
                 <Tabs
                     defaultActiveKey="chef"
                     onChange={(key) => setActiveTab(key as 'chef' | 'customer' | 'driver')}

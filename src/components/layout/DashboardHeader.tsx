@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 
 export default function DashboardHeader() {
     return (
-        <div className="">
-            <div className="bg-bg py-3 px-4">
+        <div>
+            <div className="bg-bg px-4">
                 <div className="flex items-center justify-between gap-4">
                     {/* Left section - Greeting */}
                     <Link to="/">
-                        <div className="flex flex-col gap-3 items-center justify-center pl-28">
-                            <img src="/logo.svg" alt="" className="h-16" />
+                        <div className="flex flex-col gap-3 items-center justify-center pl-24">
+                            <img src="/logo.svg" alt="" className="h-20" />
                         </div>
                     </Link>
 

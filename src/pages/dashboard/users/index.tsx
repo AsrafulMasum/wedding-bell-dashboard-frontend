@@ -324,7 +324,7 @@ export default function Users({ dashboard }: { dashboard?: boolean }) {
                 <ConfigProvider
                     theme={{
                         token: {
-                            colorPrimary: '#59A817',
+                            colorPrimary: '#C8A284',
                         },
                     }}
                 >

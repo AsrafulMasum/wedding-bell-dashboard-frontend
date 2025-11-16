@@ -21,7 +21,7 @@ const Login = () => {
         <ConfigProvider
             theme={{
                 token: {
-                    colorPrimary: '#59A817',
+                    colorPrimary: '#C8A284',
 
                     colorBgContainer: '#F1F4F9',
                 },

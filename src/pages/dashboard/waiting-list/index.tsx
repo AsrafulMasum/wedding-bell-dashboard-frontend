@@ -249,7 +249,7 @@ export default function WaitingList({ dashboard }: { dashboard?: boolean }) {
                     <ConfigProvider
                         theme={{
                             token: {
-                                colorPrimary: '#59A817',
+                                colorPrimary: '#C8A284',
                             },
                         }}
                     >
@@ -264,7 +264,7 @@ export default function WaitingList({ dashboard }: { dashboard?: boolean }) {
                 <ConfigProvider
                     theme={{
                         token: {
-                            colorPrimary: '#59A817',
+                            colorPrimary: '#C8A284',
                         },
                     }}
                 >

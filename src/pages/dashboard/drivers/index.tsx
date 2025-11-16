@@ -401,7 +401,7 @@ export default function Drivers({ dashboard }: { dashboard?: boolean }) {
     return (
         <>
             <div className="rounded-lg shadow-sm border border-gray-200 p-4">
-                <ConfigProvider theme={{ token: { colorPrimary: '#59A817' } }}>
+                <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
                     <Tabs defaultActiveKey="1">
                         {/* 🧍‍♂️ Existing Drivers Tab (unchanged) */}
                         <TabPane tab="Drivers" key="1">
@@ -416,7 +416,7 @@ export default function Drivers({ dashboard }: { dashboard?: boolean }) {
                             <ConfigProvider
                                 theme={{
                                     token: {
-                                        colorPrimary: '#59A817',
+                                        colorPrimary: '#C8A284',
                                     },
                                 }}
                             >
@@ -442,7 +442,7 @@ export default function Drivers({ dashboard }: { dashboard?: boolean }) {
                             <ConfigProvider
                                 theme={{
                                     token: {
-                                        colorPrimary: '#59A817',
+                                        colorPrimary: '#C8A284',
                                     },
                                 }}
                             >

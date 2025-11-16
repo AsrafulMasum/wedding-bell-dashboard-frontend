@@ -5,22 +5,37 @@ import { earningsData } from '../../../demo-data/home-data';
 
 const { Option } = Select;
 
-const canadianCities = [
-    'Toronto',
-    'Vancouver',
-    'Montreal',
-    'Calgary',
-    'Ottawa',
-    'Edmonton',
-    'Quebec City',
-    'Winnipeg',
-    'Halifax',
-    'Victoria',
-];
+// const canadianCities = [
+//     'Toronto',
+//     'Vancouver',
+//     'Montreal',
+//     'Calgary',
+//     'Ottawa',
+//     'Edmonton',
+//     'Quebec City',
+//     'Winnipeg',
+//     'Halifax',
+//     'Victoria',
+// ];
+
+const CustomLegend = () => {
+    return (
+        <div className="flex gap-2 2xl:gap-4 text-sm text-[#757575] pr-4">
+            <div className="flex items-center gap-1 whitespace-nowrap">
+                <div className="w-3 h-3 bg-[#C8A284] rounded-full" />
+                Customers
+            </div>
+            <div className="flex items-center gap-1 whitespace-nowrap">
+                <div className="w-3 h-3 bg-[#52C41A] rounded-full" />
+                Organizers
+            </div>
+        </div>
+    );
+};
 
 const TotalUserChart = () => {
     const [selectedYear, setSelectedYear] = useState('2025');
-    const [selectedCity, setSelectedCity] = useState('Toronto');
+    // const [selectedCity, setSelectedCity] = useState('Toronto');
 
     return (
         <div>
@@ -28,14 +43,15 @@ const TotalUserChart = () => {
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-semibold">Total Users</h2>
                     <div className="flex gap-2">
+                        <CustomLegend />
                         {/* City Dropdown */}
-                        <Select value={selectedCity} onChange={setSelectedCity} className="w-40">
+                        {/* <Select value={selectedCity} onChange={setSelectedCity} className="w-40">
                             {canadianCities.map((city) => (
                                 <Option key={city} value={city}>
                                     {city}
                                 </Option>
                             ))}
-                        </Select>
+                        </Select> */}
 
                         {/* Year Dropdown */}
                         <Select value={selectedYear} onChange={setSelectedYear} className="w-24">
@@ -52,7 +68,7 @@ const TotalUserChart = () => {
                         <XAxis dataKey="month" stroke="#999" style={{ fontSize: '12px' }} />
                         <YAxis stroke="#999" style={{ fontSize: '12px' }} tickFormatter={(value) => `${value}`} />
                         <Tooltip
-                            formatter={(value) => `$${value}`}
+                            formatter={(value) => `${value}`}
                             contentStyle={{
                                 backgroundColor: '#f5f5f5',
                                 border: 'none',
@@ -63,19 +79,15 @@ const TotalUserChart = () => {
                         />
                         <Bar
                             dataKey="value"
-                            fill="#8979FF"
+                            name="Customers"
+                            fill="#C8A284"
                             radius={[6, 6, 0, 0]} // rounded top corners
                             barSize={15}
                         />
                         <Bar
                             dataKey="value"
-                            fill="#FF928A"
-                            radius={[6, 6, 0, 0]} // rounded top corners
-                            barSize={15}
-                        />
-                        <Bar
-                            dataKey="value"
-                            fill="#3CC3DF"
+                            name="Organizers"
+                            fill="#52C41A"
                             radius={[6, 6, 0, 0]} // rounded top corners
                             barSize={15}
                         />

@@ -41,7 +41,7 @@ const AddEditCategoryModal = ({
     };
 
     return (
-        <ConfigProvider theme={{ token: { colorPrimary: '#59A817' } }}>
+        <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
             <Modal
                 centered
                 title={

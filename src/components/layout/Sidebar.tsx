@@ -55,12 +55,12 @@ const Sidebar = () => {
                             },
                             components: {
                                 Menu: {
-                                    itemActiveBg: '#59A817',
+                                    itemActiveBg: '#C8A284',
                                     itemSelectedColor: '#fff',
                                     itemBorderRadius: '10px 10px 10px 10px' as any,
                                     itemHeight: 45,
                                     itemMarginBlock: 9,
-                                    itemSelectedBg: '#59A817',
+                                    itemSelectedBg: '#C8A284',
                                 },
                             },
                         }}
@@ -77,12 +77,12 @@ const Sidebar = () => {
                     </ConfigProvider>
                 </div>
 
-                <div className="py-3 ps-4 absolute bottom-0 w-full bg-[#FFF]">
+                <div className="py-3 ps-4 absolute bottom-0 w-full bg-[#FFFDFB]">
                     <button
                         onClick={() => {
                             navigate('/login');
                         }}
-                        className="w-full flex items-center gap-3 px-4 bg-white/15 text-[#F44336] font-semibold rounded-md transition"
+                        className="w-full flex items-center gap-3 px-4 text-[#F44336] font-semibold rounded-md transition"
                     >
                         <LogOut size={20} />
                         <span>Log Out</span>

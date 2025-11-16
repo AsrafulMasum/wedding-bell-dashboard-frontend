@@ -307,7 +307,7 @@ export default function Reviews({ dashboard }: { dashboard?: boolean }) {
             dataIndex: 'rating',
             key: 'rating',
             responsive: ['md'] as any,
-            render: (_, record) => <Rate disabled defaultValue={record.rating} style={{ color: '#59A817' }} />,
+            render: (_, record) => <Rate disabled defaultValue={record.rating} style={{ color: '#C8A284' }} />,
         },
         {
             title: 'City',
@@ -445,7 +445,7 @@ export default function Reviews({ dashboard }: { dashboard?: boolean }) {
                 <ConfigProvider
                     theme={{
                         token: {
-                            colorPrimary: '#59A817',
+                            colorPrimary: '#C8A284',
                         },
                     }}
                 >

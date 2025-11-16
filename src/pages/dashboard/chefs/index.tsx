@@ -410,7 +410,7 @@ export default function Chefs({ dashboard }: { dashboard?: boolean }) {
 
     return (
         <>
-            <ConfigProvider theme={{ token: { colorPrimary: '#59A817' } }}>
+            <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
                 <Tabs defaultActiveKey="1">
                     <TabPane tab="Chefs" key="1">
                         {/* 👇 Your original table untouched */}
@@ -423,7 +423,7 @@ export default function Chefs({ dashboard }: { dashboard?: boolean }) {
                                     prefix={<i className="bi bi-search"></i>}
                                 />
                             </div>
-                            <ConfigProvider theme={{ token: { colorPrimary: '#59A817' } }}>
+                            <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
                                 <Table
                                     columns={columns}
                                     dataSource={chefData}
@@ -437,7 +437,7 @@ export default function Chefs({ dashboard }: { dashboard?: boolean }) {
                     <TabPane tab="Requests" key="2">
                         <div className="rounded-lg shadow-sm border border-gray-200 p-4">
                             <HeaderTitle title="Chef Requests" />
-                            <ConfigProvider theme={{ token: { colorPrimary: '#59A817' } }}>
+                            <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
                                 <Table columns={requestColumns} dataSource={requestData} pagination={{ pageSize: 9 }} />
                             </ConfigProvider>
                         </div>

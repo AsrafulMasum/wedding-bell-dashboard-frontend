@@ -5,22 +5,33 @@ import { earningsData } from '../../../demo-data/home-data';
 
 const { Option } = Select;
 
-const canadianCities = [
-    'Toronto',
-    'Vancouver',
-    'Montreal',
-    'Calgary',
-    'Ottawa',
-    'Edmonton',
-    'Quebec City',
-    'Winnipeg',
-    'Halifax',
-    'Victoria',
-];
+// const canadianCities = [
+//     'Toronto',
+//     'Vancouver',
+//     'Montreal',
+//     'Calgary',
+//     'Ottawa',
+//     'Edmonton',
+//     'Quebec City',
+//     'Winnipeg',
+//     'Halifax',
+//     'Victoria',
+// ];
+
+const CustomLegend = () => {
+    return (
+        <div className="flex gap-2 2xl:gap-4 text-sm text-[#757575] pr-4">
+            <div className="flex items-center gap-1 whitespace-nowrap">
+                <div className="w-3 h-3 bg-[#C8A284] rounded-full" />
+                Revenue
+            </div>
+        </div>
+    );
+};
 
 const TotalEarning = () => {
     const [selectedYear, setSelectedYear] = useState('2025');
-    const [selectedCity, setSelectedCity] = useState('Toronto');
+    // const [selectedCity, setSelectedCity] = useState('Toronto');
 
     return (
         <div>
@@ -28,14 +39,15 @@ const TotalEarning = () => {
                 <div className="flex justify-between items-center mb-4 gap-4">
                     <h2 className="text-lg font-semibold">Total Revenue</h2>
                     <div className="flex gap-2">
+                        <CustomLegend />
                         {/* City Dropdown */}
-                        <Select value={selectedCity} onChange={setSelectedCity} className="w-40">
+                        {/* <Select value={selectedCity} onChange={setSelectedCity} className="w-40">
                             {canadianCities.map((city) => (
                                 <Option key={city} value={city}>
                                     {city}
                                 </Option>
                             ))}
-                        </Select>
+                        </Select> */}
 
                         {/* Year Dropdown */}
                         <Select value={selectedYear} onChange={setSelectedYear} className="w-24">
@@ -50,8 +62,8 @@ const TotalEarning = () => {
                     <AreaChart data={earningsData}>
                         <defs>
                             <linearGradient id="colorEarnings" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#8979FF" stopOpacity={0.4} />
-                                <stop offset="95%" stopColor="#8979FF" stopOpacity={0} />
+                                <stop offset="5%" stopColor="#C8A284" stopOpacity={0.4} />
+                                <stop offset="95%" stopColor="#C8A284" stopOpacity={0} />
                             </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -69,13 +81,14 @@ const TotalEarning = () => {
                         />
                         <Area
                             type="monotone"
+                            name="Revenue"
                             dataKey="value"
-                            stroke="#8979FF"
+                            stroke="#C8A284"
                             strokeWidth={2}
                             fillOpacity={1}
                             fill="url(#colorEarnings)"
                             activeDot={{ r: 6 }}
-                            dot={{ fill: '#8979FF', r: 4 }}
+                            dot={{ fill: '#C8A284', r: 4 }}
                         />
                     </AreaChart>
                 </ResponsiveContainer>

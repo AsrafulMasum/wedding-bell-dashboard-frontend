@@ -5,8 +5,16 @@ import { LucideChartSpline, LucideHandCoins } from 'lucide-react';
 import { LuUserCheck, LuUserCog } from 'react-icons/lu';
 import { LiaGiftsSolid } from 'react-icons/lia';
 import TotalSubscriberChart from './TotalSubscriberChart';
+import { useGetDashboardSummaryQuery, useGetEarningStatisticsQuery, useGetSubscriptionStatisticsQuery, useGetUserStatisticsQuery } from '../../../redux/apiSlices/homeSlice';
 
 const App: React.FC = () => {
+
+     const {data} = useGetDashboardSummaryQuery();
+     const {data:userStaticts} = useGetUserStatisticsQuery({});
+     const {data:userReviewStaticts} = useGetEarningStatisticsQuery({});
+     const {data:userSubscriptionStaticts} = useGetSubscriptionStatisticsQuery({});
+
+     console.log({data})
     const StatCard: React.FC<{ icon: React.ReactNode; title: string; value: string }> = ({ icon, title, value }) => (
         <div className="rounded-lg shadow-sm border border-gray-200 p-2 2xl:p-4">
             <div className="flex items-center gap-2">
@@ -21,25 +29,126 @@ const App: React.FC = () => {
         </div>
     );
 
+    // const earning = [
+    //     {
+    //         "month": "Jan",
+    //         "revenue": 10
+    //     },
+    //     {
+    //         "month": "Feb",
+    //         "revenue": 20
+    //     },
+    //     {
+    //         "month": "Mar",
+    //         "revenue": 20
+    //     },
+    //     {
+    //         "month": "Apr",
+    //         "revenue": 50
+    //     },
+    //     {
+    //         "month": "May",
+    //         "revenue": 0
+    //     },
+    //     {
+    //         "month": "Jun",
+    //         "revenue": 0
+    //     },
+    //     {
+    //         "month": "Jul",
+    //         "revenue": 0
+    //     },
+    //     {
+    //         "month": "Aug",
+    //         "revenue": 0
+    //     },
+    //     {
+    //         "month": "Sep",
+    //         "revenue": 20
+    //     },
+    //     {
+    //         "month": "Oct",
+    //         "revenue": 0
+    //     },
+    //     {
+    //         "month": "Nov",
+    //         "revenue": 0
+    //     },
+    //     {
+    //         "month": "Dec",
+    //         "revenue": 100
+    //     }
+    // ]
+    // const subscriptions = [
+    //     {
+    //         "month": "Jan",
+    //         "total": 10
+    //     },
+    //     {
+    //         "month": "Feb",
+    //         "total": 0
+    //     },
+    //     {
+    //         "month": "Mar",
+    //         "total": 0
+    //     },
+    //     {
+    //         "month": "Apr",
+    //         "total": 0
+    //     },
+    //     {
+    //         "month": "May",
+    //         "total": 0
+    //     },
+    //     {
+    //         "month": "Jun",
+    //         "total": 0
+    //     },
+    //     {
+    //         "month": "Jul",
+    //         "total": 0
+    //     },
+    //     {
+    //         "month": "Aug",
+    //         "total": 0
+    //     },
+    //     {
+    //         "month": "Sep",
+    //         "total": 0
+    //     },
+    //     {
+    //         "month": "Oct",
+    //         "total": 200
+    //     },
+    //     {
+    //         "month": "Nov",
+    //         "total": 50
+    //     },
+    //     {
+    //         "month": "Dec",
+    //         "total": 150
+    //     }
+    // ]
+
+
     return (
         <div>
             <div>
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3.5 mb-4">
-                    <StatCard icon={<TbUsers />} title="Total Customer" value="68k" />
-                    <StatCard icon={<LuUserCog />} title="Total Organizer" value="32k" />
-                    <StatCard icon={<LuUserCheck />} title="Total Subscriber" value="18K" />
-                    <StatCard icon={<LiaGiftsSolid />} title="Packages" value="20K" />
-                    <StatCard icon={<LucideHandCoins />} title="Total Income" value="78K" />
-                    <StatCard icon={<LucideChartSpline />} title="Total Revenue" value="18K" />
+                    <StatCard icon={<TbUsers />} title="Total Customer" value={String(data?.customers ?? 0)} />
+                    <StatCard icon={<LuUserCog />} title="Total Organizer" value={String(data?.vendors ?? 0)} />
+                    <StatCard icon={<LuUserCheck />} title="Total Subscriber" value={String(data?.subscribers ?? 0)} />
+                    <StatCard icon={<LiaGiftsSolid />} title="Packages" value={String(data?.packages ?? 0)} />
+                    <StatCard icon={<LucideHandCoins />} title="Total Income" value={String(data?.incomes ?? 0)} />
+                    <StatCard icon={<LucideChartSpline />} title="Total Revenue" value={String(data?.revenues ?? 0)} />
                 </div>
 
                 {/* Users */}
-                <TotalUserChart />
+                <TotalUserChart userStaticts={userStaticts ? [userStaticts] : []} />
                 {/* Revenue Chart */}
-                <TotalEarning />
-                {/* Subscriber Chart */}
-                <TotalSubscriberChart />
+                <TotalEarning  earning={userReviewStaticts as any}/>
+                <TotalSubscriberChart  subscriptions={userSubscriptionStaticts as any} /> 
             </div>
         </div>
     );

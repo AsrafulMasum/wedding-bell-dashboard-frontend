@@ -1,73 +1,28 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, ConfigProvider, Select, Table, Tabs, message } from 'antd';
-import type { ColumnType } from 'antd/es/table';
+import { Button, ConfigProvider, Table, message } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
 import { CategoryTypes } from '../../../types/types';
 import { MdOutlineDeleteOutline } from 'react-icons/md';
 import { FiEdit } from 'react-icons/fi';
 import AddEditCategoryModal from '../../../components/modals/AddEditCategoryModal';
 import DeleteModal from '../../../components/modals/DeleteModal';
-
-const { Option } = Select;
-
-const canadianCities = [
-    'Toronto',
-    'Vancouver',
-    'Montreal',
-    'Calgary',
-    'Edmonton',
-    'Ottawa',
-    'Winnipeg',
-    'Quebec City',
-    'Hamilton',
-    'Kitchener',
-    'London',
-    'Victoria',
-    'Halifax',
-    'Oshawa',
-    'Windsor',
-    'Saskatoon',
-    'Regina',
-    'St. Johns',
-    'Barrie',
-    'Kelowna',
-    'Abbotsford',
-    'Sherbrooke',
-    'Guelph',
-    'Kingston',
-    'Forfield',
-    'Noperville',
-    'Orange',
-    'Toledo',
-    'Austin',
-];
+import { useCreateCategoryMutation, useGetCategoriesQuery } from '../../../redux/apiSlices/categorySlice';
+import { imageUrl } from '../../../redux/api/baseApi';
 
 export const categoryData: CategoryTypes[] = [
-    { key: '1', categoryName: 'Italian Cuisine', totalDishes: 45, city: 'Toronto', deliveryStatus: 'active' },
-    { key: '2', categoryName: 'Chinese Delights', totalDishes: 38, city: 'Vancouver', deliveryStatus: 'inactive' },
-    { key: '3', categoryName: 'Indian Spices', totalDishes: 52, city: 'Calgary', deliveryStatus: 'active' },
-    { key: '4', categoryName: 'Mexican Fiesta', totalDishes: 41, city: 'Ottawa', deliveryStatus: 'inactive' },
+    { key: '1', categoryName: 'Italian Cuisine', totalDishes: 45 },
+    { key: '2', categoryName: 'Chinese Delights', totalDishes: 38 },
+    { key: '3', categoryName: 'Indian Spices', totalDishes: 52 },
+    { key: '4', categoryName: 'Mexican Fiesta', totalDishes: 41 },
 ];
-
-export const subCategoryData: CategoryTypes[] = [
-    { key: '1', categoryName: 'Pasta', totalDishes: 12, city: 'Toronto', deliveryStatus: 'active' },
-    { key: '2', categoryName: 'Dim Sum', totalDishes: 8, city: 'Vancouver', deliveryStatus: 'inactive' },
-    { key: '3', categoryName: 'Curry', totalDishes: 10, city: 'Calgary', deliveryStatus: 'active' },
-    { key: '4', categoryName: 'Tacos', totalDishes: 7, city: 'Ottawa', deliveryStatus: 'inactive' },
-];
-
-const statusColorMap = {
-    active: { color: '#52C41A', bg: '#D9F2CD' },
-    inactive: { color: '#FF0000', bg: '#FFCCCC' },
-};
 
 export default function Category({ dashboard }: { dashboard?: boolean }) {
-    const [activeTab, setActiveTab] = useState<'category' | 'subcategory'>('category');
-
-    const [categoryList, setCategoryList] = useState<CategoryTypes[]>(categoryData);
-    const [subCategoryList, setSubCategoryList] = useState<CategoryTypes[]>(subCategoryData);
+    const { data } = useGetCategoriesQuery({})
+    const [createCategory] = useCreateCategoryMutation();
+    const categoryList = data?.data;
 
     // modal states
     const [isAddEditModalOpen, setIsAddEditModalOpen] = useState(false);
@@ -77,23 +32,18 @@ export default function Category({ dashboard }: { dashboard?: boolean }) {
 
     const handleAddEditSubmit = (values: Partial<CategoryTypes>) => {
         if (editingItem) {
-            const updated = (activeTab === 'category' ? categoryList : subCategoryList).map((item) =>
-                item.key === editingItem.key ? { ...item, ...values } : item,
+            const updated = categoryList.map((item) =>
+                item.key === editingItem.key ? { ...item, ...values } : item
             );
-            activeTab === 'category' ? setCategoryList(updated) : setSubCategoryList(updated);
+            setCategoryList(updated);
             message.success('Updated successfully!');
         } else {
             const newItem: CategoryTypes = {
                 key: Date.now().toString(),
-                categoryName: '',
-                totalDishes: 0,
-                city: '',
-                deliveryStatus: 'active',
-                ...values,
+                categoryName: values.categoryName || '',
+                totalDishes: values.totalDishes || 0,
             };
-            activeTab === 'category'
-                ? setCategoryList([...categoryList, newItem])
-                : setSubCategoryList([...subCategoryList, newItem]);
+            setCategoryList([...categoryList, newItem]);
             message.success('Added successfully!');
         }
         setIsAddEditModalOpen(false);
@@ -101,138 +51,37 @@ export default function Category({ dashboard }: { dashboard?: boolean }) {
     };
 
     const handleDeleteConfirm = () => {
-        const updated = (activeTab === 'category' ? categoryList : subCategoryList).filter(
-            (item) => item.key !== deletingKey,
-        );
-        activeTab === 'category' ? setCategoryList(updated) : setSubCategoryList(updated);
+        const updated = categoryList.filter((item) => item.key !== deletingKey);
+        setCategoryList(updated);
         setIsDeleteModalOpen(false);
         setDeletingKey(null);
         message.success('Deleted successfully!');
     };
 
-    const columns: ColumnType<CategoryTypes>[] = [
+    const columns: ColumnsType<CategoryTypes> = [
         {
             title: 'Serial No.',
-            dataIndex: 'key',
-            key: 'key',
-            responsive: ['sm'] as any,
+            dataIndex: 'index',
+            key: 'index',
+            render: (_, __, index) => index + 1,
         },
         {
-            title: 'Category Name',
-            dataIndex: 'categoryName',
-            key: 'categoryName',
-        },
-        {
-            title: 'Total Dishes',
-            dataIndex: 'totalDishes',
-            key: 'totalDishes',
-            responsive: ['sm'] as any,
-        },
-        // {
-        //   title: 'City',
-        //   dataIndex: 'city',
-        //   key: 'city',
-        //   responsive: ['lg'] as any,
-        //   filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-        //     <div style={{ padding: 8 }}>
-        //       <Select
-        //         placeholder="Select a Canadian city"
-        //         value={selectedKeys?.[0] ?? undefined}
-        //         style={{ width: 200 }}
-        //         onChange={(value) => {
-        //           setSelectedKeys?.(value ? [value] : []);
-        //           confirm?.();
-        //         }}
-        //         allowClear
-        //         showSearch
-        //         filterOption={(input, option) =>
-        //           (option?.children as unknown as string).toLowerCase().includes(input.toLowerCase())
-        //         }
-        //       >
-        //         {canadianCities?.map((city) => (
-        //           <Option key={city} value={city}>
-        //             {city}
-        //           </Option>
-        //         ))}
-        //       </Select>
-        //       <div style={{ marginTop: 8 }}>
-        //         <a
-        //           onClick={() => {
-        //             clearFilters?.();
-        //             confirm?.();
-        //           }}
-        //           style={{ width: 90, marginRight: 8 }}
-        //         >
-        //           Reset
-        //         </a>
-        //       </div>
-        //     </div>
-        //   ),
-        //   onFilter: (value: string | number | boolean, record: CategoryTypes) => record.city === value,
-        //   render: (city: string) => city,
-        // },
-        {
-            title: 'City',
-            dataIndex: 'city',
-            key: 'city',
-            responsive: ['lg'] as any,
-            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-                <div style={{ padding: 8 }}>
-                    <Select
-                        placeholder="Select a Canadian city"
-                        value={selectedKeys?.[0] ?? undefined}
-                        style={{ width: 200 }}
-                        onChange={(value) => {
-                            setSelectedKeys?.(value ? [value] : []);
-                            confirm?.();
-                        }}
-                        allowClear
-                        showSearch
-                        filterOption={(input, option) =>
-                            (option?.children as unknown as string).toLowerCase().includes(input.toLowerCase())
-                        }
-                    >
-                        {canadianCities.map((city) => (
-                            <Option key={city} value={city}>
-                                {city}
-                            </Option>
-                        ))}
-                    </Select>
-                    <div style={{ marginTop: 8 }}>
-                        <a
-                            onClick={() => {
-                                clearFilters?.();
-                                confirm?.();
-                            }}
-                            style={{ width: 90, marginRight: 8 }}
-                        >
-                            Reset
-                        </a>
-                    </div>
+            title: 'Image',
+            key: 'image',
+            render: (_, record) => (
+                <div className="h-12 w-20">
+                    <img
+                        src={`${imageUrl}/${record.image}`}
+                        alt="slider"
+                        className="w-full h-full object-cover rounded-md"
+                    />
                 </div>
             ),
-            onFilter: (value, record) => record.city === String(value),
-            render: (city: string) => city,
         },
         {
-            title: 'Status',
-            dataIndex: 'deliveryStatus',
-            key: 'deliveryStatus',
-            render: (status: CategoryTypes['deliveryStatus']) => {
-                const currentStyle =
-                    status in statusColorMap
-                        ? statusColorMap[status as keyof typeof statusColorMap]
-                        : { color: '#595959', bg: '#FAFAFA' };
-
-                return (
-                    <p
-                        className="capitalize px-1 py-0.5 text-center rounded-lg max-w-40"
-                        style={{ color: currentStyle.color, backgroundColor: currentStyle.bg }}
-                    >
-                        {status}
-                    </p>
-                );
-            },
+            title: 'Category',
+            dataIndex: 'name',
+            key: 'name',
         },
         {
             title: 'Action',
@@ -264,60 +113,30 @@ export default function Category({ dashboard }: { dashboard?: boolean }) {
     return (
         <div className="rounded-lg shadow-sm border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-4">
-                <HeaderTitle title={activeTab === 'category' ? 'Categories' : 'Sub-Categories'} />
+                <HeaderTitle title="Categories" />
+
                 <button
                     className="bg-primary h-10 px-4 rounded-md text-white text-sm font-semibold"
                     onClick={() => setIsAddEditModalOpen(true)}
                 >
-                    Add {activeTab === 'category' ? 'Category' : 'Sub-Category'}
+                    Add Category
                 </button>
             </div>
 
-            <ConfigProvider
-                theme={{
-                    token: { colorPrimary: '#C8A284' },
-                }}
-            >
-                <Tabs
-                    defaultActiveKey="category"
-                    onChange={(key) => setActiveTab(key as 'category' | 'subcategory')}
-                    items={[
-                        {
-                            key: 'category',
-                            label: 'Categories',
-                            children: (
-                                <Table
-                                    columns={columns}
-                                    dataSource={categoryList}
-                                    pagination={dashboard ? false : { pageSize: 9, total: categoryList.length }}
-                                    className="custom-table"
-                                />
-                            ),
-                        },
-                        {
-                            key: 'subcategory',
-                            label: 'Sub-Categories',
-                            children: (
-                                <Table
-                                    columns={columns}
-                                    dataSource={subCategoryList}
-                                    pagination={dashboard ? false : { pageSize: 9, total: subCategoryList.length }}
-                                    className="custom-table"
-                                />
-                            ),
-                        },
-                    ]}
+            <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
+                <Table
+                    columns={columns}
+                    dataSource={categoryList}
+                    pagination={dashboard ? false : { pageSize: 9 }}
+                    rowKey="key"
                 />
             </ConfigProvider>
 
-            {/* Modals */}
             <AddEditCategoryModal
                 open={isAddEditModalOpen}
                 onCancel={() => setIsAddEditModalOpen(false)}
                 onSubmit={handleAddEditSubmit}
                 editingItem={editingItem}
-                activeTab={activeTab}
-                canadianCities={canadianCities}
             />
 
             <DeleteModal

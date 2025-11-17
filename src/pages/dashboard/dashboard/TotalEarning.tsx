@@ -1,22 +1,6 @@
-import { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Select, Card } from 'antd';
-import { earningsData } from '../../../demo-data/home-data';
-
-const { Option } = Select;
-
-// const canadianCities = [
-//     'Toronto',
-//     'Vancouver',
-//     'Montreal',
-//     'Calgary',
-//     'Ottawa',
-//     'Edmonton',
-//     'Quebec City',
-//     'Winnipeg',
-//     'Halifax',
-//     'Victoria',
-// ];
+import {  Card } from 'antd';
+import { IEarningStatistics } from '../../../types/types';
 
 const CustomLegend = () => {
     return (
@@ -29,8 +13,7 @@ const CustomLegend = () => {
     );
 };
 
-const TotalEarning = () => {
-    const [selectedYear, setSelectedYear] = useState('2025');
+const TotalEarning = ({earning}:{earning:IEarningStatistics}) => {
     // const [selectedCity, setSelectedCity] = useState('Toronto');
 
     return (
@@ -41,25 +24,18 @@ const TotalEarning = () => {
                     <div className="flex gap-2">
                         <CustomLegend />
                         {/* City Dropdown */}
-                        {/* <Select value={selectedCity} onChange={setSelectedCity} className="w-40">
-                            {canadianCities.map((city) => (
-                                <Option key={city} value={city}>
-                                    {city}
-                                </Option>
-                            ))}
-                        </Select> */}
 
                         {/* Year Dropdown */}
-                        <Select value={selectedYear} onChange={setSelectedYear} className="w-24">
+                        {/* <Select value={selectedYear} onChange={setSelectedYear} className="w-24">
                             <Option value="2023">2023</Option>
                             <Option value="2024">2024</Option>
                             <Option value="2025">2025</Option>
-                        </Select>
+                        </Select> */}
                     </div>
                 </div>
 
                 <ResponsiveContainer width="100%" height={250}>
-                    <AreaChart data={earningsData}>
+                    <AreaChart data={earning as any}>
                         <defs>
                             <linearGradient id="colorEarnings" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="#C8A284" stopOpacity={0.4} />
@@ -82,7 +58,7 @@ const TotalEarning = () => {
                         <Area
                             type="monotone"
                             name="Revenue"
-                            dataKey="value"
+                            dataKey="revenue"
                             stroke="#C8A284"
                             strokeWidth={2}
                             fillOpacity={1}

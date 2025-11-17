@@ -1,91 +1,107 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, ConfigProvider, Input, Modal, Table, Upload } from 'antd';
+import { Button, ConfigProvider, Input, Modal, Table, Upload, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FiEdit, FiSearch } from 'react-icons/fi';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 
-// ---------------- Types ------------------------
-interface BannerType {
-    _id: string;
-    name: string;
-    banner: string;
-}
+import {
+    useCreateBannerMutation,
+    useDeleteBannerMutation,
+    useGetBannersQuery,
+    useUpdateBannerMutation,
+} from '../../../redux/apiSlices/bannerSlice';
 
-// ---------------- Dummy Data -------------------
-const dummyBanners: BannerType[] = [
-    {
-        _id: '1',
-        name: 'Summer Offer',
-        banner: '/banner1.jpg',
-    },
-    {
-        _id: '2',
-        name: 'Winter Sale',
-        banner: '/banner2.jpg',
-    },
-];
+import { imageUrl } from '../../../redux/api/baseApi';
+import { IBanner } from '../../../types/types';
 
 const AppSliderList: React.FC = () => {
-    const [page, setPage] = useState<number>(1);
+    const [page] = useState<number>(1);
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    const [banners, setBanners] = useState<BannerType[]>(dummyBanners);
+    const { data, refetch } = useGetBannersQuery({ query: searchTerm });
+    const [createBanner] = useCreateBannerMutation();
+    const [updateBanner] = useUpdateBannerMutation();
+    const [deleteBanner] = useDeleteBannerMutation();
 
-    // Modal states
-    const [openAddModal, setOpenAddModal] = useState<boolean>(false);
-    const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-    const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+    const banners = data?.data || [];
 
-    const [editData, setEditData] = useState<BannerType | null>(null);
+    const [openAddModal, setOpenAddModal] = useState(false);
+    const [openEditModal, setOpenEditModal] = useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+    const [editData, setEditData] = useState<IBanner | null>(null);
     const [deleteId, setDeleteId] = useState<string>('');
 
-    // ---------------- Search -----------------------
-    const filteredData = banners.filter((x) => x.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    useEffect(() => {
+        refetch();
+    }, [searchTerm]);
 
-    // ---------------- Delete -----------------------
-    const handleDelete = () => {
-        setBanners((prev) => prev.filter((item) => item._id !== deleteId));
-        setOpenDeleteModal(false);
+    /* -----------------------------
+        DELETE HANDLER
+    ------------------------------ */
+    const handleDelete = async () => {
+        try {
+            await deleteBanner({ id: deleteId }).unwrap();
+            message.success('Banner deleted successfully');
+            setOpenDeleteModal(false);
+            refetch();
+        } catch {
+            message.error('Failed to delete banner');
+        }
     };
 
-    // ---------------- Add --------------------------
-    const handleAddBanner = (name: string, banner: string) => {
-        const newItem: BannerType = {
-            _id: (banners.length + 1).toString(),
-            name,
-            banner,
-        };
-        setBanners([...banners, newItem]);
-        setOpenAddModal(false);
+    /* -----------------------------
+        ADD HANDLER
+    ------------------------------ */
+    const handleAddBanner = async (image: File | null) => {
+        if (!image) return message.error('Please select an image');
+
+        try {
+            await createBanner({ image }).unwrap();
+            message.success('Banner added successfully');
+            setOpenAddModal(false);
+            refetch();
+        } catch {
+            message.error('Failed to add banner');
+        }
     };
 
-    // ---------------- Edit --------------------------
-    const handleEditBanner = (name: string, banner: string) => {
+    /* -----------------------------
+        EDIT HANDLER
+    ------------------------------ */
+    const handleEditBanner = async (image: File | null) => {
         if (!editData) return;
 
-        setBanners((prev) => prev.map((item) => (item._id === editData._id ? { ...item, name, banner } : item)));
-        setOpenEditModal(false);
+        const form: any = {};
+        if (image) form.image = image; // only send if new image selected
+
+        try {
+            await updateBanner({ id: editData._id, data: form }).unwrap();
+            message.success('Banner updated successfully');
+            setOpenEditModal(false);
+            refetch();
+        } catch {
+            message.error('Failed to update banner');
+        }
     };
 
-    // ---------------- Columns -----------------------
-    const columns: ColumnsType<BannerType> = [
+    const columns: ColumnsType<IBanner> = [
         {
             title: 'Serial No.',
             key: 'serial',
-            render: (_, __, index) => <span>{index + 1}</span>,
-        },
-        {
-            title: 'Title',
-            dataIndex: 'name',
-            key: 'name',
+            render: (_, __, index) => <span>{(page - 1) * 10 + index + 1}</span>,
         },
         {
             title: 'Slider Image',
-            key: 'banner',
+            key: 'image',
             render: (_, record) => (
                 <div className="h-12 w-20">
-                    <img src={record.banner} alt="slider" className="w-full h-full object-cover rounded-md" />
+                    <img
+                        src={`${imageUrl}/${record.image}`}
+                        alt="slider"
+                        className="w-full h-full object-cover rounded-md"
+                    />
                 </div>
             ),
         },
@@ -110,7 +126,7 @@ const AppSliderList: React.FC = () => {
                             setOpenDeleteModal(true);
                         }}
                     >
-                        <RiDeleteBin6Line size={18} className="text-secondary" />
+                        <RiDeleteBin6Line size={18} className="text-secondary text-red-500" />
                     </button>
                 </div>
             ),
@@ -119,19 +135,13 @@ const AppSliderList: React.FC = () => {
 
     return (
         <div className="h-full">
+            {/* Header */}
             <div style={{ background: '#FFFFFF', borderRadius: '12px' }}>
-                {/* Header */}
                 <div className="flex items-center justify-between p-4">
                     <h3 className="text-[#757575] text-lg font-medium">App Slider</h3>
 
                     <div className="flex items-center gap-3">
-                        <ConfigProvider
-                            theme={{
-                                token: {
-                                    colorPrimary: '#C8A284',
-                                },
-                            }}
-                        >
+                        <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
                             <Input
                                 placeholder="Search..."
                                 prefix={<FiSearch size={14} color="#868FA0" />}
@@ -151,49 +161,29 @@ const AppSliderList: React.FC = () => {
 
                 {/* Table */}
                 <div className="relative p-2">
-                    <Table
-                        size="small"
-                        columns={columns}
-                        rowKey="_id"
-                        dataSource={filteredData}
-                        pagination={{
-                            current: page,
-                            total: filteredData.length,
-                            pageSize: 10,
-                            onChange: (page) => setPage(page),
-                        }}
-                    />
+                    <Table size="small" columns={columns} rowKey="_id" dataSource={banners} />
                 </div>
             </div>
 
-            {/* ---------------- Add Modal ---------------- */}
+            {/* ADD MODAL */}
             <AddOrEditModal
                 open={openAddModal}
                 onClose={() => setOpenAddModal(false)}
                 onSubmit={handleAddBanner}
                 title="Add Banner"
-                defaultName=""
-                defaultImage=""
             />
 
-            {/* ---------------- Edit Modal ---------------- */}
+            {/* EDIT MODAL */}
             <AddOrEditModal
                 open={openEditModal}
                 onClose={() => setOpenEditModal(false)}
                 onSubmit={handleEditBanner}
                 title="Edit Banner"
-                defaultName={editData?.name || ''}
-                defaultImage={editData?.banner || ''}
+                defaultImageUrl={editData ? `${imageUrl}/${editData.image}` : ''}
             />
 
-            {/* ---------------- Delete Modal ---------------- */}
-            <Modal
-                centered
-                open={openDeleteModal}
-                onCancel={() => setOpenDeleteModal(false)}
-                footer={false}
-                width={350}
-            >
+            {/* DELETE MODAL */}
+            <Modal centered open={openDeleteModal} onCancel={() => setOpenDeleteModal(false)} footer={false} width={350}>
                 <div className="p-6 text-center">
                     <p className="text-red-600 text-lg font-semibold">Are you sure?</p>
                     <p className="mt-2 mb-8">Do you want to delete this banner?</p>
@@ -209,56 +199,66 @@ const AppSliderList: React.FC = () => {
 
 export default AppSliderList;
 
-// ===================================================
-//   Add / Edit Modal Component
-// ===================================================
+/* ===========================================================
+      Add / Edit Modal Component
+=========================================================== */
 interface AddEditProps {
     open: boolean;
     onClose: () => void;
-    onSubmit: (name: string, image: string) => void;
+    onSubmit: (image: File | null) => void;
     title: string;
-    defaultName: string;
-    defaultImage: string;
+    defaultImageUrl?: string;
 }
 
-const AddOrEditModal: React.FC<AddEditProps> = ({ open, onClose, onSubmit, title, defaultName, defaultImage }) => {
-    const [name, setName] = useState<string>(defaultName);
-    const [image, setImage] = useState<string>(defaultImage);
+const AddOrEditModal: React.FC<AddEditProps> = ({
+    open,
+    onClose,
+    onSubmit,
+    title,
+    defaultImageUrl,
+}) => {
+    const [file, setFile] = useState<File | null>(null);
+    const [preview, setPreview] = useState<string>(defaultImageUrl || '');
+
+    useEffect(() => {
+        setPreview(defaultImageUrl || '');
+        setFile(null);
+    }, [defaultImageUrl]);
+
+    const handleUploadChange = (info: any) => {
+        const uploadedFile = info.file as File;
+        if (uploadedFile) {
+            setFile(uploadedFile);
+            setPreview(URL.createObjectURL(uploadedFile));
+        }
+    };
+
+    const handleSubmit = () => {
+        onSubmit(file || null); // send null if no new file selected
+    };
 
     return (
         <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
             <Modal open={open} onCancel={onClose} footer={false} centered width={450}>
                 <h2 className="text-lg font-semibold mb-4">{title}</h2>
+
                 <div className="flex justify-center items-center">
                     <Upload
                         listType="picture-card"
                         className="mb-8"
                         showUploadList={false}
                         beforeUpload={() => false}
-                        onChange={(info) => {
-                            const file = info.file.originFileObj;
-                            if (file) {
-                                const url = URL.createObjectURL(file);
-                                setImage(url);
-                            }
-                        }}
+                        onChange={handleUploadChange}
                     >
-                        {image ? (
-                            <img src={image} alt="banner" className="w-full h-full object-cover" />
+                        {preview ? (
+                            <img src={preview} alt="banner" className="w-full h-full object-cover" />
                         ) : (
                             <div>Upload</div>
                         )}
                     </Upload>
                 </div>
 
-                <Input
-                    placeholder="Banner Title"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="mb-4 h-10"
-                />
-
-                <Button type="primary" onClick={() => onSubmit(name, image)} className="w-full h-10 mt-4">
+                <Button type="primary" onClick={handleSubmit} className="w-full h-10 mt-4">
                     Submit
                 </Button>
             </Modal>

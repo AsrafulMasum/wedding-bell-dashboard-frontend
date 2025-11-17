@@ -1,22 +1,9 @@
-import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Select, Card } from 'antd';
-import { earningsData } from '../../../demo-data/home-data';
+import {  Card } from 'antd';
+import { IUserStatistics } from '../../../types/types';
 
-const { Option } = Select;
+// const { Option } = Select;
 
-// const canadianCities = [
-//     'Toronto',
-//     'Vancouver',
-//     'Montreal',
-//     'Calgary',
-//     'Ottawa',
-//     'Edmonton',
-//     'Quebec City',
-//     'Winnipeg',
-//     'Halifax',
-//     'Victoria',
-// ];
 
 const CustomLegend = () => {
     return (
@@ -33,9 +20,7 @@ const CustomLegend = () => {
     );
 };
 
-const TotalUserChart = () => {
-    const [selectedYear, setSelectedYear] = useState('2025');
-    // const [selectedCity, setSelectedCity] = useState('Toronto');
+const TotalUserChart = ({ userStaticts }: { userStaticts: IUserStatistics[] }) => {
 
     return (
         <div>
@@ -54,16 +39,16 @@ const TotalUserChart = () => {
                         </Select> */}
 
                         {/* Year Dropdown */}
-                        <Select value={selectedYear} onChange={setSelectedYear} className="w-24">
+                        {/* <Select value={selectedYear} onChange={setSelectedYear} className="w-24">
                             <Option value="2023">2023</Option>
                             <Option value="2024">2024</Option>
                             <Option value="2025">2025</Option>
-                        </Select>
+                        </Select> */}
                     </div>
                 </div>
 
                 <ResponsiveContainer width="100%" height={240}>
-                    <BarChart data={earningsData}>
+                    <BarChart data={userStaticts}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                         <XAxis dataKey="month" stroke="#999" style={{ fontSize: '12px' }} />
                         <YAxis stroke="#999" style={{ fontSize: '12px' }} tickFormatter={(value) => `${value}`} />
@@ -78,14 +63,14 @@ const TotalUserChart = () => {
                             labelStyle={{ color: '#c61f1f' }}
                         />
                         <Bar
-                            dataKey="value"
+                            dataKey="customers"
                             name="Customers"
                             fill="#C8A284"
                             radius={[6, 6, 0, 0]} // rounded top corners
                             barSize={15}
                         />
                         <Bar
-                            dataKey="value"
+                            dataKey="vendors"
                             name="Organizers"
                             fill="#52C41A"
                             radius={[6, 6, 0, 0]} // rounded top corners

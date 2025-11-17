@@ -1,227 +1,48 @@
-interface MonthlyStats {
-    month: string;
-    newUsers: number;
-    totalUsers: number;
-    newSubscriptions: number;
-    totalSubscriptions: number;
-    monthlyEarning: number;
-}
-
-export interface IAnalatycs {
-    year: number;
-    totalUsers: number;
-    totalBookings: number;
-    totalEarning: number;
-    totalSubscriptions: number;
-    monthlyData: MonthlyStats[];
-}
-
-export interface IUser {
+export interface Ifaq {
     _id: string;
-    name: string;
-    profilePic: string | null;
-    isVerifiedHost: boolean;
-    email: string;
-    contact: string;
-    address: string;
-    connectedAccountId: string | null;
-    stripeConnectedLink: string | null;
-    dateOfBirth: string; // ISO string (e.g., "2003-09-11T18:00:00.000Z")
-    images: string[];
-    status: 'active' | 'inactive' | string;
-    role: 'guest' | 'host' | 'admin' | string;
-    verified: boolean;
-    createdAt: string; // ISO string
-    updatedAt: string; // ISO string
-    airlineVerification: string | null;
+    question: string;
+    answer: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
 }
-
 export interface IPagination {
-    total: number;
-    limit: number;
     page: number;
-    totalPage: number;
+    limit: number;
+    totalPages: number;
+    totalItems: number;
 }
 
-export interface IFacility {
-    _id: string;
-    name: string;
-    logo: string;
-    createdAt: string; // ISO Date string
-    updatedAt: string; // ISO Date string
+export interface IDashboardData {
+    customers: number;
+    vendors: number;
+    packages: number;
+    revenues: number;
+    subscribers: number;
+    incomes: number;
 }
-
-export interface IPackage {
-    _id: string;
-    title: string;
-    price: number;
-    billingCycle: string; // e.g. "add-on"
-    description: string;
-    features: string[];
-    active: boolean;
-    createdAt: string; // ISO Date string
-    updatedAt: string; // ISO Date string
-    __v: number;
+export interface IUserStatistics {
+    month: string;
+    customers: number;
+    vendors: number;
 }
-
-export interface IReview {
-    _id: string;
-    hotel: string;
-    content: string;
-    user: {
-        _id: string;
-        name: string;
-        email: string;
-        id: string;
-    };
-    rating: number;
-    isVisible: boolean;
-    createdAt: string; // ISO string
-    updatedAt: string; // ISO string
-    __v: number;
-}
-
-export interface INotification {
-    _id: string;
-    title: string;
-    refId: string;
-    path: string;
-    message: string;
-    seen: boolean;
-    createdAt: string; // ISO date string
-    updatedAt: string; // ISO date string
-    __v: number;
-    receiver: string;
-}
-
-export interface Order {
-    email: string;
-    key: string;
-    orderNumber: string;
-    customerName: string;
-    chefName: string;
-    itemCount: number;
-    city: string;
-    price: number;
+export interface IEarningStatistics {
+    month: string;
     revenue: number;
-    orderData: string;
-    deliveryStatus: 'pending' | 'completed' | 'cancelled' | 'delivered';
-    status: 'active' | 'inactive';
-    productImage: string;
+}
+export interface IEsubscriptonStatistics {
+    month: string;
+    total: number;
 }
 
-export interface WaitingListTypes {
-    key: string;
-    customerName: string;
-    city: string;
-    zipCode: string;
-    email: string;
-    contact: string;
-}
-
-export interface User {
-    key: string;
-    serialId: string;
-    userName: string;
-    email: string;
-    address: string;
-    city: string;
+export interface IBanner {
+    _id: string;
+    image: string;
     createdAt: string;
-    country: string;
-    status: 'active' | 'inactive';
+    updatedAt: string;
 }
-
-export interface DriverTypes {
-    key: string;
-    serialId: string;
-    userName: string;
-    email: string;
-    address: string;
-    city: string;
-    vehicleType: string;
-    licenseNo: string;
-    files: string; // could be a filename or short label like "3 files uploaded"
-    status: 'active' | 'inactive';
-}
-
-export interface ChefsTypes {
-    serialId?: string;
-    userName?: string;
-    name?: string;
-    email: string;
-    address: string;
-    city?: string;
-    createdAt?: string;
-    totalOrder?: number;
-    revenue?: number;
-    status: string;
-    cuisineType?: string;
-    certificate?: string;
-}
-
-export interface CategoryTypes {
-    key: string;
-    categoryName: string;
-    totalDishes: number;
-    city: string;
-    deliveryStatus: 'active' | 'inactive';
-}
-
-export interface ReviewTypes {
-    key: string;
-    customerName: string;
-    chefName: string;
-    dishName: string;
-    rating: number;
-    city: string;
-    reviewText: string;
-    createdAt: string;
-    status: string;
-}
-
-export interface RefundType {
-    key: string;
-    orderNumber: string;
-    customerName: string;
-    chefName: string;
-    refundType: string;
-    paidAmount: string;
-    refundPercentage: string;
-    reason: string;
-    deliveryStatus: 'Approved' | 'Pending' | 'Rejected';
-    refundPercent: number;
-    amount: string;
-}
-
-export interface TransactionTypes {
-    key: string;
-    transactionID: string;
+export interface ICategory {
+    _id: string;
     name: string;
-    email: string;
-    city: string;
-    date: string;
-    totalSales?: string;
-    totalDeliveries?: number;
-    totalOrders?: number;
-    payment?: string;
-    income?: string;
-    revenue: string;
-    deliveryStatus: 'Approved' | 'Pending' | 'Rejected';
+    image: string;
 }
-
-export type StatusType = 'active' | 'inactive';
-export type ActiveTab = 'region' | 'city';
-
-export type RegionType = {
-    key: string;
-    regionName: string;
-    totalCity: number;
-    status: StatusType;
-};
-
-export type CityType = {
-    key: string;
-    regionName: string;
-    cityName: string;
-    status: StatusType;
-};

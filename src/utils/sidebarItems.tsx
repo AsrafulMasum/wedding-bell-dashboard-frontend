@@ -6,6 +6,7 @@ import { MdOutlineCategory, MdOutlinePayments } from 'react-icons/md';
 import { IoCalendarOutline, IoSettingsOutline } from 'react-icons/io5';
 import { FaRegCircleQuestion } from 'react-icons/fa6';
 import { PiImagesSquare } from 'react-icons/pi';
+import { GoQuestion } from 'react-icons/go';
 
 const sidebarItems: TSidebarItem[] = [
     {
@@ -55,6 +56,12 @@ const sidebarItems: TSidebarItem[] = [
         label: 'Subscriptions',
         path: 'subscriptions',
         icon: <MdOutlinePayments size={24} />,
+    },
+    {
+        key: 'faq',
+        label: 'Faq',
+        path: 'faq',
+        icon: <GoQuestion size={24} />,
     },
     {
         key: 'settings',

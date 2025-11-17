@@ -1,67 +1,61 @@
 import { useState } from 'react';
-import { Button, ConfigProvider, Modal, Form, Input } from 'antd';
+import { Button, ConfigProvider, Modal, Form, Input, Spin, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { GoQuestion } from 'react-icons/go';
 import { CiEdit } from 'react-icons/ci';
 import { RiDeleteBin6Line } from 'react-icons/ri';
-
-interface FaqItem {
-    id: string;
-    question: string;
-    answer: string;
-}
-
-const initialFaqs: FaqItem[] = [
-    {
-        id: '1',
-        question: 'How do I create an account',
-        answer: 'You can create an account by signing up with your email address.',
-    },
-    {
-        id: '2',
-        question: 'How can I reset my password',
-        answer: 'Click on ‘Forgot Password’ and follow the steps.',
-    },
-];
+import { useCreateFaqMutation, useDeleteFaqMutation, useGetFaqsQuery, useUpdateFaqMutation } from '../../../redux/apiSlices/faqSlice';
+import { Ifaq } from '../../../types/types';
 
 const FAQ = () => {
-    const [faqs, setFaqs] = useState<FaqItem[]>(initialFaqs);
-
+    const { data: faqsData, isLoading, refetch } = useGetFaqsQuery({});
+    const [createFaq] = useCreateFaqMutation();
+    const [updateFaq] = useUpdateFaqMutation();
+    const [deleteFaq] = useDeleteFaqMutation();
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-    const [selectedFaq, setSelectedFaq] = useState<FaqItem | null>(null);
+    const [selectedFaq, setSelectedFaq] = useState<Ifaq | null>(null);
     const [deleteId, setDeleteId] = useState<string>('');
 
     const [addForm] = Form.useForm();
     const [editForm] = Form.useForm();
 
+
     // ADD
     const handleAdd = () => {
-        addForm.validateFields().then((values) => {
-            const newItem: FaqItem = {
-                id: String(Date.now()),
-                ...values,
-            };
-            setFaqs([...faqs, newItem]);
-            addForm.resetFields();
-            setIsAddOpen(false);
+        addForm.validateFields().then(async (values) => {
+            try {
+                await createFaq({ data: values }).unwrap();
+                message.success('FAQ added successfully');
+                addForm.resetFields();
+                setIsAddOpen(false);
+                refetch();
+            } catch (error) {
+                message.error('Failed to add FAQ');
+            }
         });
     };
 
     // EDIT
-    const openEdit = (item: FaqItem) => {
+    const openEdit = (item: Ifaq) => {
         setSelectedFaq(item);
         editForm.setFieldsValue(item);
         setIsEditOpen(true);
     };
 
     const handleEdit = () => {
-        editForm.validateFields().then((values) => {
+        editForm.validateFields().then(async (values) => {
             if (!selectedFaq) return;
-            setFaqs(faqs.map((faq) => (faq.id === selectedFaq.id ? { ...faq, ...values } : faq)));
-            setIsEditOpen(false);
+            try {
+                await updateFaq({ id: selectedFaq._id, data: values }).unwrap();
+                message.success('FAQ updated successfully');
+                setIsEditOpen(false);
+                refetch();
+            } catch (error) {
+                message.error('Failed to update FAQ');
+            }
         });
     };
 
@@ -71,10 +65,18 @@ const FAQ = () => {
         setIsDeleteOpen(true);
     };
 
-    const handleDelete = () => {
-        setFaqs(faqs.filter((faq) => faq.id !== deleteId));
-        setIsDeleteOpen(false);
+    const handleDelete = async () => {
+        try {
+            await deleteFaq({ id: deleteId }).unwrap();
+            message.success('FAQ deleted successfully');
+            setIsDeleteOpen(false);
+            refetch();
+        } catch (error) {
+            message.error('Failed to delete FAQ');
+        }
     };
+
+    console.log('faqsData',faqsData)
 
     return (
         <ConfigProvider
@@ -107,39 +109,45 @@ const FAQ = () => {
 
                 {/* LIST VIEW - SAME DESIGN AS YOUR ORIGINAL */}
                 <div className="bg-white pb-6 px-4 rounded-md">
-                    {faqs.map((item) => (
-                        <div key={item.id} className="flex justify-between items-start gap-4 border-b pb-4 mt-4">
-                            {/* Icon */}
-                            <div className="mt-3">
-                                <GoQuestion color="#C8A284" size={25} />
-                            </div>
+                    {isLoading ? (
+                        <div className="flex justify-center items-center h-64">
+                            <Spin size="large" />
+                        </div>
+                    ) : (
+                        (faqsData?.data ?? [])?.map((item) => (
+                            <div key={item._id} className="flex justify-between items-start gap-4 border-b pb-4 mt-4">
+                                {/* Icon */}
+                                <div className="mt-3">
+                                    <GoQuestion color="#C8A284" size={25} />
+                                </div>
 
-                            {/* Text Section */}
-                            <div className="w-full">
-                                <p className="text-base font-medium border-b py-2 px-4 rounded-lg bg-[#f8f8f8] flex items-center gap-8 text-[#757575]">
-                                    {item.question} ?
-                                </p>
+                                {/* Text Section */}
+                                <div className="w-full">
+                                    <p className="text-base font-medium border-b py-2 px-4 rounded-lg bg-[#f8f8f8] flex items-center gap-8 text-[#757575]">
+                                        {item.question} ?
+                                    </p>
 
-                                <div className="flex items-start gap-2 py-2 px-4 rounded-lg mt-3">
-                                    <p className="text-[#757575] leading-[24px]">{item.answer}</p>
+                                    <div className="flex items-start gap-2 py-2 px-4 rounded-lg mt-3">
+                                        <p className="text-[#757575] leading-[24px]">{item.answer}</p>
+                                    </div>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex flex-col gap-2 mt-2">
+                                    <CiEdit
+                                        size={26}
+                                        onClick={() => openEdit(item)}
+                                        className="cursor-pointer text-[#FFC107]"
+                                    />
+                                    <RiDeleteBin6Line
+                                        size={24}
+                                        onClick={() => openDelete(item._id)}
+                                        className="cursor-pointer text-[#D93D04]"
+                                    />
                                 </div>
                             </div>
-
-                            {/* Action Buttons */}
-                            <div className="flex flex-col gap-2 mt-2">
-                                <CiEdit
-                                    size={26}
-                                    onClick={() => openEdit(item)}
-                                    className="cursor-pointer text-[#FFC107]"
-                                />
-                                <RiDeleteBin6Line
-                                    size={24}
-                                    onClick={() => openDelete(item.id)}
-                                    className="cursor-pointer text-[#D93D04]"
-                                />
-                            </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
 
                 {/* ---------------- Add Modal ---------------- */}

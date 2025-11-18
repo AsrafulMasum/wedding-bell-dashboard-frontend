@@ -21,7 +21,6 @@ export const categoryData: CategoryTypes[] = [
 
 export default function Category({ dashboard }: { dashboard?: boolean }) {
     const { data } = useGetCategoriesQuery({})
-    const [createCategory] = useCreateCategoryMutation();
     const categoryList = data?.data;
 
     // modal states
@@ -31,13 +30,13 @@ export default function Category({ dashboard }: { dashboard?: boolean }) {
     const [deletingKey, setDeletingKey] = useState<string | null>(null);
 
     const handleAddEditSubmit = (values: Partial<CategoryTypes>) => {
+        console.log({values})
         if (editingItem) {
-            const updated = categoryList.map((item) =>
-                item.key === editingItem.key ? { ...item, ...values } : item
-            );
-            setCategoryList(updated);
+            
+            const data ={name:values.name,image:values.image}
             message.success('Updated successfully!');
         } else {
+            console.log({data})
             const newItem: CategoryTypes = {
                 key: Date.now().toString(),
                 categoryName: values.categoryName || '',

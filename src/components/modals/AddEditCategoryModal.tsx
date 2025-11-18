@@ -1,14 +1,10 @@
-'use client';
-
-import { Modal, Form, Input, Select, ConfigProvider } from 'antd';
-
-const { Option } = Select;
+import { Modal, Form, Input, ConfigProvider, Upload, Button } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { useEffect } from 'react';
 
 type CategoryFormValues = {
     categoryName?: string;
-    totalDishes?: number;
-    city?: string;
-    deliveryStatus: 'active' | 'inactive';
+    image?: any;
 };
 
 interface AddEditCategoryModalProps {
@@ -16,8 +12,6 @@ interface AddEditCategoryModalProps {
     onCancel: () => void;
     onSubmit: (values: CategoryFormValues) => void;
     editingItem?: Record<string, any> | null;
-    activeTab?: 'category' | 'sub-category' | string;
-    canadianCities: string[];
 }
 
 const AddEditCategoryModal = ({
@@ -25,30 +19,33 @@ const AddEditCategoryModal = ({
     onCancel,
     onSubmit,
     editingItem,
-    activeTab,
-    // canadianCities,
 }: AddEditCategoryModalProps) => {
     const [form] = Form.useForm<CategoryFormValues>();
 
-    // When editing, prefill form values
-    if (editingItem) {
-        form.setFieldsValue(editingItem);
-    }
+    // Prefill form when editing
+    useEffect(() => {
+        if (editingItem) {
+            form.setFieldsValue({
+                categoryName: editingItem.categoryName,
+                image: editingItem.image ? [{ name: editingItem.image }] : [],
+            });
+        } else {
+            form.resetFields();
+        }
+    }, [editingItem, form]);
 
     const handleFinish = (values: CategoryFormValues) => {
         onSubmit(values);
         form.resetFields();
     };
 
+    const normFile = (e: any) => (Array.isArray(e) ? e : e?.fileList);
+
     return (
         <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
             <Modal
                 centered
-                title={
-                    editingItem
-                        ? `Edit ${activeTab === 'category' ? 'Category' : 'Sub-Category'}`
-                        : `Add ${activeTab === 'category' ? 'Category' : 'Sub-Category'}`
-                }
+                title={editingItem ? `Edit Category` : `Add Category`}
                 open={open}
                 onCancel={() => {
                     form.resetFields();
@@ -58,52 +55,30 @@ const AddEditCategoryModal = ({
                 okText={editingItem ? 'Update' : 'Add'}
                 destroyOnClose
             >
-                <Form form={form} layout="vertical" onFinish={handleFinish} initialValues={editingItem || {}}>
+                <Form form={form} layout="vertical" onFinish={handleFinish}>
                     <Form.Item
                         name="categoryName"
                         label="Name"
                         rules={[{ required: true, message: 'Please enter a name' }]}
                     >
-                        <Input
-                            placeholder="Enter category name"
-                            style={{
-                                height: '48px',
-                            }}
-                        />
+                        <Input placeholder="Enter category name" style={{ height: '48px' }} />
                     </Form.Item>
 
-                    {/* <Form.Item
-                        name="totalDishes"
-                        label="Total Dishes"
-                        rules={[{ required: true, message: 'Please enter total dishes' }]}
-                    >
-                        <Input type="number" placeholder="Enter total dishes" />
-                    </Form.Item> */}
-
-                    {/* <Form.Item name="city" label="City" rules={[{ required: true, message: 'Please select a city' }]}>
-                        <Select placeholder="Select a city" showSearch>
-                            {canadianCities.map((city) => (
-                                <Option key={city} value={city}>
-                                    {city}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Form.Item> */}
-
                     <Form.Item
-                        name="deliveryStatus"
-                        label="Status"
-                        rules={[{ required: true, message: 'Please select a status' }]}
+                        name="image"
+                        label="Image"
+                        valuePropName="fileList"
+                        getValueFromEvent={normFile}
+                        rules={[{ required: !editingItem, message: 'Please upload an image' }]}
                     >
-                        <Select
-                            placeholder="Select status"
-                            style={{
-                                height: '48px',
-                            }}
+                        <Upload
+                            name="image"
+                            listType="picture"
+                            maxCount={1}
+                            beforeUpload={() => false} // prevent automatic upload
                         >
-                            <Option value="active">Active</Option>
-                            <Option value="inactive">Inactive</Option>
-                        </Select>
+                            <Button icon={<UploadOutlined />}>Click to upload</Button>
+                        </Upload>
                     </Form.Item>
                 </Form>
             </Modal>

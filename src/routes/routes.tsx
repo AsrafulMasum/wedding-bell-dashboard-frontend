@@ -11,9 +11,6 @@ import TermsAndCondition from '../pages/dashboard/terms-and-condition';
 import Profile from '../pages/dashboard/profile';
 import Notification from '../pages/dashboard/notification';
 import PrivacyPolicy from '../pages/dashboard/privacy-policy';
-import Orders from '../pages/dashboard/orders';
-import Drivers from '../pages/dashboard/drivers';
-import Chefs from '../pages/dashboard/chefs';
 import AboutUs from '../pages/dashboard/about-us';
 import Disclaimer from '../pages/dashboard/disclaimer';
 import Category from '../pages/dashboard/category';
@@ -22,6 +19,7 @@ import AppSliderList from '../pages/dashboard/banners';
 import FAQ from '../pages/dashboard/faq';
 import Subscription from '../pages/dashboard/package';
 import PrivateRoute from '../provider/PrivateRoutes';
+import Orders from '../pages/dashboard/orders';
 
 const router = createBrowserRouter([
     {
@@ -35,9 +33,8 @@ const router = createBrowserRouter([
             { path: 'orders', element: <Orders /> },
             { path: 'banners', element: <AppSliderList /> },
             { path: 'categories', element: <Category /> },
-            { path: 'chefs', element: <Chefs /> },
+            // { path: 'chefs', element: <Category /> },
             { path: 'users', element: <Users /> },
-            { path: 'drivers', element: <Drivers /> },
             { path: 'transactions', element: <Transactions /> },
             { path: 'subscriptions', element: <Subscription /> },
             { path: 'profile', element: <Profile /> },

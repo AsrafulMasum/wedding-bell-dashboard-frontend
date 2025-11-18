@@ -1,7 +1,7 @@
 import { ConfigProvider, Menu, MenuProps } from 'antd';
 import { TSidebarItem } from '../../utils/generateSidebarItems';
 import sidebarItems from '../../utils/sidebarItems';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ReactNode, useState } from 'react';
 import { LogOut } from 'lucide-react';
 import { handleLogout } from '../../services/auth.service';

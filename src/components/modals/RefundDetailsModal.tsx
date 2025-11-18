@@ -1,6 +1,5 @@
 import React from 'react';
 import { Modal } from 'antd';
-import { RefundType } from '../../types/types';
 
 export interface RefundDetails {
     customerName: string;
@@ -14,7 +13,7 @@ export interface RefundDetails {
 interface RefundDetailsModalProps {
     open: boolean;
     onClose: () => void;
-    refund: RefundType | null;
+    refund: any | null;
 }
 
 const RefundDetailsModal: React.FC<RefundDetailsModalProps> = ({ open, onClose, refund }) => {

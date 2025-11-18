@@ -1,5 +1,5 @@
 import { ConfigProvider, Form, Input, Modal, Select } from "antd";
-import { ActiveTab, CityType, RegionType } from "../../types/types";
+import { ICategory } from "../../types/types";
 import React from "react";
 const { Option } = Select;
  export default function AddRegionCityModal({
@@ -13,9 +13,9 @@ const { Option } = Select;
     open: boolean;
     onCancel: () => void;
     onSubmit: (values: any) => void;
-    editingItem: RegionType | CityType | null;
-    activeTab: ActiveTab;
-    regionOptions: RegionType[];
+    editingItem: ICategory  | null;
+    activeTab: any;
+    regionOptions: any[];
 }) {
     const [form] = Form.useForm();
 
@@ -24,14 +24,14 @@ const { Option } = Select;
             if (editingItem) {
                 // populate fields depending on activeTab
                 if (activeTab === 'region') {
-                    const r = editingItem as RegionType;
+                    const r = editingItem as any;
                     form.setFieldsValue({
                         regionName: r.regionName,
                         totalCity: r.totalCity,
                         status: r.status,
                     });
                 } else {
-                    const c = editingItem as CityType;
+                    const c = editingItem as any;
                     form.setFieldsValue({
                         regionName: c.regionName,
                         cityName: c.cityName,

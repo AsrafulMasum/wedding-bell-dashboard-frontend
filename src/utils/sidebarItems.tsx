@@ -1,5 +1,5 @@
 import { TSidebarItem } from './generateSidebarItems';
-import { LuClipboardList, LuLayoutDashboard, LuUserCheck, LuUserCog } from 'react-icons/lu';
+import { LuClipboardList, LuLayoutDashboard } from 'react-icons/lu';
 import { TbBook, TbUsers } from 'react-icons/tb';
 import { MdOutlineCategory, MdOutlinePayments } from 'react-icons/md';
 import { IoCalendarOutline, IoSettingsOutline } from 'react-icons/io5';
@@ -25,24 +25,24 @@ const sidebarItems: TSidebarItem[] = [
         path: 'categories',
         icon: <MdOutlineCategory size={24} />,
     },
-    {
-        key: 'chefs',
-        label: 'Organizers',
-        path: 'chefs',
-        icon: <LuUserCog size={24} />,
-    },
+    // {
+    //     key: 'chefs',
+    //     label: 'Organizers',
+    //     path: 'chefs',
+    //     icon: <LuUserCog size={24} />,
+    // },
     {
         key: 'users',
         label: 'Customers',
         path: 'users',
         icon: <TbUsers size={24} />,
     },
-    {
-        key: 'drivers',
-        label: 'Subscribers',
-        path: 'drivers',
-        icon: <LuUserCheck size={24} />,
-    },
+    // {
+    //     key: 'drivers',
+    //     label: 'Subscribers',
+    //     path: 'drivers',
+    //     icon: <LuUserCheck size={24} />,
+    // },
     {
         key: 'orders',
         label: 'Bookings',

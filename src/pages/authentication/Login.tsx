@@ -1,6 +1,8 @@
-import { Button, Checkbox, ConfigProvider, Form, FormProps, Input } from 'antd';
+import { Button, Checkbox, ConfigProvider, Form, FormProps, Input, message } from 'antd';
 import { FieldNamesType } from 'antd/es/cascader';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { setToLocalStorage } from '../../services/auth.service';
+import { useLoginMutation } from '../../redux/apiSlices/authSlice';
 
 
 export type errorType = {
@@ -10,11 +12,24 @@ export type errorType = {
     };
 };
 const Login = () => {
-    const navigate = useNavigate();
-    const onFinish: FormProps<FieldNamesType>['onFinish'] = async() => {
+    const [login, { isLoading }] = useLoginMutation();
 
-
-        navigate('/');
+    const onFinish: FormProps<FieldNamesType>['onFinish'] = async (values) => {
+        try {
+            const result = await login(values).unwrap();
+            if (result?.data?.accessToken) {
+                message.success('Sign in successful!');
+                setToLocalStorage(result?.data?.accessToken);
+            }
+        } catch (err: any) {
+            if (err?.data?.errorMessages?.length) {
+                message.error(err.data.errorMessages[0].message);
+            } else if (err?.data?.message) {
+                message.error(err.data.message);
+            } else {
+                message.error('Sign in failed. Please try again.');
+            }
+        }
     };
 
     return (
@@ -86,18 +101,18 @@ const Login = () => {
 
                         <Form.Item>
                             <Button
-                            className='!bg-primary'
+                                className='!bg-primary'
                                 htmlType="submit"
                                 style={{
                                     height: 45,
                                     width: '100%',
                                     fontWeight: 500,
                                     color: '#fff',
-                                    fontSize: 20,                                    
+                                    fontSize: 20,
                                 }}
-                                // onClick={() => navigate('/')}
+                                loading={isLoading} // add loading prop for status
                             >
-                                Sign In
+                                {isLoading ? "Signing In..." : "Sign In"}
                             </Button>
                         </Form.Item>
                     </Form>

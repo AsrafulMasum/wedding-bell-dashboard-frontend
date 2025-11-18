@@ -1,35 +1,42 @@
 import { useEffect } from 'react';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, ConfigProvider, Form, Input } from 'antd';
-import { SubscriptionType } from '.';
+import { ConfigProvider, Form, Input, Select, Button } from 'antd';
+import type { ISubscriptionPlan } from '../../../types/types';
+import type { PlanFormValues } from '.';
 
 interface EditProps {
-    packageData: SubscriptionType | null;
+    packageData: ISubscriptionPlan | null;
     setOpenEditModal: (v: boolean) => void;
-    handleEdit: (pkg: SubscriptionType) => void;
+    handleEdit: (values: PlanFormValues, id: string) => void;
 }
 
 const EditInputForm: React.FC<EditProps> = ({ packageData, setOpenEditModal, handleEdit }) => {
-    const [form] = Form.useForm();
+    const [form] = Form.useForm<PlanFormValues>();
 
     useEffect(() => {
         if (packageData) {
-            form.setFieldsValue(packageData);
+            const { title, description, price, duration, paymentType, productId, paymentLink, status } = packageData;
+            form.setFieldsValue({
+                title,
+                description,
+                price,
+                duration,
+                paymentType,
+                productId,
+                paymentLink,
+                status,
+            });
         }
-    }, [packageData]);
+    }, [packageData, form]);
 
-    const onFinish = (values: any) => {
+    const onFinish = (values: PlanFormValues) => {
         if (!packageData) return;
-
-        const updated: SubscriptionType = {
-            ...packageData,
-            name: values.name,
-            duration: values.duration,
-            price: Number(values.price),
-            features: values.features,
-        };
-
-        handleEdit(updated);
+        handleEdit(
+            {
+                ...values,
+                price: Number(values.price),
+            },
+            packageData._id,
+        );
         setOpenEditModal(false);
     };
 
@@ -40,47 +47,72 @@ const EditInputForm: React.FC<EditProps> = ({ packageData, setOpenEditModal, han
             }}
         >
             <Form form={form} onFinish={onFinish} layout="vertical">
-                <Form.Item name="name" label="Package Name" rules={[{ required: true }]}>
+                <Form.Item
+                    name="title"
+                    label="Plan Title"
+                    rules={[{ required: true, message: 'Please enter a title' }]}
+                >
                     <Input />
                 </Form.Item>
 
-                <Form.Item name="duration" label="Duration" rules={[{ required: true }]}>
-                    <Input />
+                <Form.Item
+                    name="description"
+                    label="Description"
+                    rules={[{ required: true, message: 'Please enter a description' }]}
+                >
+                    <Input.TextArea rows={3} />
                 </Form.Item>
 
-                <Form.Item name="price" label="Price" rules={[{ required: true }]}>
+                <Form.Item
+                    name="price"
+                    label="Price"
+                    rules={[{ required: true, message: 'Please enter a price' }]}
+                >
                     <Input type="number" />
                 </Form.Item>
 
-                {/* Dynamic Feature Fields */}
-                <Form.List name="features">
-                    {(fields, { add, remove }) => (
-                        <>
-                            {fields.map((field) => (
-                                <div key={field.key} className="flex items-center gap-3 mb-2">
-                                    <Form.Item
-                                        {...field}
-                                        className="flex-1"
-                                        rules={[{ required: true, message: 'Enter feature' }]}
-                                    >
-                                        <Input placeholder="Feature" />
-                                    </Form.Item>
+                <Form.Item
+                    name="duration"
+                    label="Duration"
+                    rules={[{ required: true, message: "Please select a duration" }]}
+                >
+                    <Select
+                        placeholder="Select duration"
+                        options={[
+                            { label: "Select one", value: "", disabled: true },
+                            { label: "1 month", value: "1 month" },
+                            { label: "3 months", value: "3 months" },
+                            { label: "6 months", value: "6 months" },
+                            { label: "1 year", value: "1 year" },
+                        ]}
+                    />
+                </Form.Item>
 
-                                    <MinusCircleOutlined className="text-red-600" onClick={() => remove(field.name)} />
-                                </div>
-                            ))}
+                <Form.Item
+                    name="paymentType"
+                    label="Payment Type"
+                    rules={[{ required: true, message: 'Please select a payment type' }]}
+                >
+                    <Select
+                        options={[
+                            { label: 'Monthly', value: 'Monthly' },
+                            { label: 'Yearly', value: 'Yearly' },
+                        ]}
+                    />
+                </Form.Item>
 
-                            <Button
-                                type="dashed"
-                                onClick={() => add()}
-                                icon={<PlusOutlined />}
-                                style={{ width: '100%' }}
-                            >
-                                Add Feature
-                            </Button>
-                        </>
-                    )}
-                </Form.List>
+                {/* <Form.Item
+                    name="status"
+                    label="Status"
+                    rules={[{ required: true, message: 'Please select status' }]}
+                >
+                    <Select
+                        options={[
+                            { label: 'Active', value: 'Active' },
+                            { label: 'Inactive', value: 'Inactive' },
+                        ]}
+                    />
+                </Form.Item> */}
 
                 <Button
                     type="primary"

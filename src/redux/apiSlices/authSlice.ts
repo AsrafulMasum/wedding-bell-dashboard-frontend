@@ -19,7 +19,7 @@ const authSlice = api.injectEndpoints({
             query: (data) => {
                 return {
                     method: "POST",
-                    url: "/auth/login",
+                    url: "/auth/admin-login",
                     body: data
                 }
             },
@@ -58,7 +58,7 @@ const authSlice = api.injectEndpoints({
             query: (data) => {
                 return {
                     method: "PATCH",
-                    url: "/user/me",
+                    url: "/user",
                     body: data,
                 }
             }
@@ -67,7 +67,7 @@ const authSlice = api.injectEndpoints({
         profile: builder.query({
             query: () => {
                 return {
-                    url: "/user/me",
+                    url: "/user",
                 }
             },
         }),

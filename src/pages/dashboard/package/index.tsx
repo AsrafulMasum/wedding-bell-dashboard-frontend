@@ -1,17 +1,26 @@
 import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Modal } from 'antd';
-import { IoCheckmarkCircle } from 'react-icons/io5';
+import { Button, Modal, message } from 'antd';
 import { MdDeleteOutline } from 'react-icons/md';
 import AddInputForm from './AddInputForm';
 import EditInputForm from './EditInputForm';
+import {
+    useCreatePlanMutation,
+    useDeletePlanMutation,
+    useGetPlansQuery,
+    useUpdatePlanMutation,
+} from '../../../redux/apiSlices/subscriptionSlice';
+import type { ISubscriptionPlan } from '../../../types/types';
 
-export interface SubscriptionType {
-    id: string;
-    name: string;
-    duration: string;
+export interface PlanFormValues {
+    title: string;
+    description: string;
     price: number;
-    features: string[];
+    duration: string;
+    paymentType: string;
+    productId: string;
+    paymentLink: string;
+    status: string;
 }
 
 const Subscription = () => {
@@ -19,40 +28,53 @@ const Subscription = () => {
     const [openEditModal, setOpenEditModal] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const [deleteId, setDeleteId] = useState<string | null>(null);
-    const [editPackage, setEditPackage] = useState<SubscriptionType | null>(null);
+    const [editPackage, setEditPackage] = useState<ISubscriptionPlan | null>(null);
 
-    const [packages, setPackages] = useState<SubscriptionType[]>([
-        {
-            id: '1',
-            name: 'Basic',
-            duration: '1 Month',
-            price: 19,
-            features: ['Access to basic courses', 'Limited community support'],
-        },
-        {
-            id: '2',
-            name: 'Premium',
-            duration: '3 Months',
-            price: 49,
-            features: ['Everything in Basic', 'Priority support', 'Access to premium lessons'],
-        },
-    ]);
+    const { data: packages, refetch } = useGetPlansQuery({});
+    const [createPlan, { isLoading: isCreating }] = useCreatePlanMutation();
+    const [updatePlan, { isLoading: isUpdating }] = useUpdatePlanMutation();
+    const [deletePlan, { isLoading: isDeleting }] = useDeletePlanMutation();
 
-    // Handle Add
-    const handleAdd = (pkg: SubscriptionType) => {
-        setPackages((prev) => [...prev, pkg]);
+    // Handle Add (Create)
+    const handleAdd = async (values: PlanFormValues) => {
+        try {
+            await createPlan(values).unwrap();
+            message.success('Subscription created successfully');
+            setOpenAddModal(false);
+            await refetch();
+        } catch (error: any) {
+            const errorMessage = error?.data?.message ?? 'Failed to create subscription';
+            message.error(errorMessage);
+        }
     };
 
-    // Handle Edit
-    const handleEdit = (updatedPkg: SubscriptionType) => {
-        setPackages((prev) => prev.map((item) => (item.id === updatedPkg.id ? updatedPkg : item)));
+    // Handle Edit (Update)
+    const handleEdit = async (values: PlanFormValues, id: string) => {
+        try {
+            await updatePlan({ id, data: values }).unwrap();
+            message.success('Subscription updated successfully');
+            setOpenEditModal(false);
+            setEditPackage(null);
+            await refetch();
+        } catch (error: any) {
+            const errorMessage = error?.data?.message ?? 'Failed to update subscription';
+            message.error(errorMessage);
+        }
     };
 
     // Handle Delete
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (!deleteId) return;
-        setPackages((prev) => prev.filter((item) => item.id !== deleteId));
-        setShowDelete(false);
+        try {
+            await deletePlan({ id: deleteId }).unwrap();
+            message.success('Subscription deleted successfully');
+            setShowDelete(false);
+            setDeleteId(null);
+            await refetch();
+        } catch (error: any) {
+            const errorMessage = error?.data?.message ?? 'Failed to delete subscription';
+            message.error(errorMessage);
+        }
     };
 
     return (
@@ -81,42 +103,50 @@ const Subscription = () => {
             </div>
 
             {/* Subscription Cards */}
-            <div className="flex flex-wrap justify-center gap-10 mt-10">
-                {packages.map((pkg) => (
+            <div className="flex flex-wrap justify-center gap-12 mt-12">
+                {packages?.data?.map((pkg) => (
                     <div
-                        key={pkg.id}
-                        className="max-w-[320px] bg-[#F4F4F4] py-4 px-6 border border-[#C8A284] rounded-lg"
+                        key={pkg._id}
+                        className="w-[360px] bg-white shadow-lg py-6 px-7 border border-[#C8A284] rounded-xl transition-all duration-200 hover:shadow-xl"
                     >
                         {/* Delete Button */}
-                        <div className="flex justify-end py-2">
-                            <div
-                                className="cursor-pointer bg-[#C8A284] p-2 rounded-full"
+                        <div className="flex justify-end pb-4">
+                            <button
+                                className="cursor-pointer bg-[#C8A284] hover:bg-[#b89170] p-2.5 rounded-full shadow-md"
                                 onClick={() => {
-                                    setDeleteId(pkg.id);
+                                    setDeleteId(pkg._id);
                                     setShowDelete(true);
                                 }}
                             >
-                                <MdDeleteOutline className="text-xl text-white" />
-                            </div>
+                                <MdDeleteOutline className="text-2xl text-white" />
+                            </button>
                         </div>
 
                         {/* Title */}
-                        <h4 className="text-xl font-medium text-center pb-2">Get {pkg.name}</h4>
-
-                        {/* Price */}
-                        <h4 className="text-center pb-3">
-                            <span className="text-4xl font-semibold">${pkg.price}</span> / per {pkg.duration}
+                        <h4 className="text-2xl font-semibold text-center pb-3">
+                             {pkg.title}
                         </h4>
 
-                        {/* Features */}
-                        <div className="space-y-3">
-                            {pkg.features.map((feature, idx) => (
-                                <div className="flex gap-2" key={idx}>
-                                    <IoCheckmarkCircle className="text-green-600 min-w-[24px]" />
-                                    <p className="text-sm">{feature}</p>
-                                </div>
-                            ))}
-                        </div>
+                        {/* Price & Duration */}
+                        <h4 className="text-center pb-2">
+                            <span className="text-5xl font-bold text-[#C8A284]">${pkg.price}</span>
+                            <span className="text-lg font-medium"> / {pkg.duration}</span>
+                        </h4>
+
+                        {/* Description */}
+                        <p className="text-base text-center text-gray-700 mb-5 leading-relaxed">
+                            {pkg.description}
+                        </p>
+
+                        {/* Status */}
+                        <p className="text-sm text-center mb-2">
+                            <span className="font-semibold">Status:</span> {pkg.status}
+                        </p>
+
+                        {/* Payment Type */}
+                        <p className="text-sm text-center mb-6">
+                            <span className="font-semibold">Payment Type:</span> {pkg.paymentType}
+                        </p>
 
                         {/* Edit Button */}
                         <button
@@ -124,17 +154,7 @@ const Subscription = () => {
                                 setEditPackage(pkg);
                                 setOpenEditModal(true);
                             }}
-                            style={{
-                                width: '100%',
-                                height: '40px',
-                                marginTop: '20px',
-                                backgroundColor: '#C8A284',
-                                color: 'white',
-                                fontWeight: 500,
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                            }}
+                            className="w-full h-[48px] bg-[#C8A284] hover:bg-[#b89170] text-white font-medium rounded-md transition-colors duration-200"
                         >
                             Edit Package
                         </button>
@@ -143,21 +163,45 @@ const Subscription = () => {
             </div>
 
             {/* Add Modal */}
-            <Modal centered open={openAddModal} onCancel={() => setOpenAddModal(false)} width={600} footer={false}>
+            <Modal
+                centered
+                open={openAddModal}
+                onCancel={() => setOpenAddModal(false)}
+                width={600}
+                footer={false}
+                confirmLoading={isCreating}
+            >
                 <AddInputForm setOpenAddModel={setOpenAddModal} handleAdd={handleAdd} />
             </Modal>
 
             {/* Edit Modal */}
-            <Modal centered open={openEditModal} onCancel={() => setOpenEditModal(false)} width={600} footer={false}>
+            <Modal
+                centered
+                open={openEditModal}
+                onCancel={() => setOpenEditModal(false)}
+                width={600}
+                footer={false}
+                confirmLoading={isUpdating}
+            >
                 <EditInputForm setOpenEditModal={setOpenEditModal} packageData={editPackage} handleEdit={handleEdit} />
             </Modal>
 
             {/* Delete Modal */}
-            <Modal centered open={showDelete} onCancel={() => setShowDelete(false)} footer={false}>
+            <Modal
+                centered
+                open={showDelete}
+                onCancel={() => setShowDelete(false)}
+                footer={false}
+                confirmLoading={isDeleting}
+            >
                 <div className="p-6 text-center">
                     <p className="text-red-600 font-semibold text-lg">Are you sure?</p>
                     <p className="py-4 text-gray-700">Do you want to delete this package?</p>
-                    <button onClick={handleDelete} className="bg-[#C8A284] text-white px-6 py-2 rounded-md">
+                    <button
+                        onClick={handleDelete}
+                        className="bg-[#C8A284] text-white px-6 py-2 rounded-md disabled:opacity-60"
+                        disabled={isDeleting}
+                    >
                         Confirm
                     </button>
                 </div>

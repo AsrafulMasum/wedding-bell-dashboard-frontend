@@ -1,4 +1,3 @@
-import { BsPatchQuestion } from 'react-icons/bs';
 import { TSidebarItem } from './generateSidebarItems';
 import { LuClipboardList, LuLayoutDashboard, LuUserCheck, LuUserCog } from 'react-icons/lu';
 import { TbBook, TbUsers } from 'react-icons/tb';
@@ -6,7 +5,6 @@ import { MdOutlineCategory, MdOutlinePayments } from 'react-icons/md';
 import { IoCalendarOutline, IoSettingsOutline } from 'react-icons/io5';
 import { FaRegCircleQuestion } from 'react-icons/fa6';
 import { PiImagesSquare } from 'react-icons/pi';
-import { GoQuestion } from 'react-icons/go';
 
 const sidebarItems: TSidebarItem[] = [
     {
@@ -58,12 +56,6 @@ const sidebarItems: TSidebarItem[] = [
         icon: <MdOutlinePayments size={24} />,
     },
     {
-        key: 'faq',
-        label: 'Faq',
-        path: 'faq',
-        icon: <GoQuestion size={24} />,
-    },
-    {
         key: 'settings',
         label: 'Settings',
         path: 'settings',
@@ -92,13 +84,7 @@ const sidebarItems: TSidebarItem[] = [
                 label: 'Privacy Policy',
                 path: 'privacy-policy',
                 icon: <LuClipboardList size={20} />,
-            },
-            {
-                key: 'disclaimer',
-                label: 'Disclaimer',
-                path: 'disclaimer',
-                icon: <BsPatchQuestion size={20} />,
-            },
+            }
         ],
     },
 ];

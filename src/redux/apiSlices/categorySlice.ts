@@ -17,13 +17,19 @@ const categorySlice = api.injectEndpoints({
                 pagination: response.pagination,
             }),
         }),
-        createCategory: builder.mutation<void, FormData>({
-            query: (data) => ({
-                url: "/category",
-                method: "POST",
-                body: data,
-            }),
+        createCategory: builder.mutation<void, { name: string; image: File }>({
+            query: ({ name, image }) => {
+                const formData = new FormData();
+                formData.append("name", name);
+                formData.append("image", image);
+                return {
+                    url: "/category",
+                    method: "POST",
+                    body: formData,
+                };
+            },
         }),
+
         updateCategory: builder.mutation<void, { id: string; data: FormData }>({
             query: ({ id, data }) => ({
                 url: `/category/${id}`,

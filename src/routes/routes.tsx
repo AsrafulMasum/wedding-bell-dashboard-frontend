@@ -21,11 +21,14 @@ import Transactions from '../pages/dashboard/transactions';
 import AppSliderList from '../pages/dashboard/banners';
 import FAQ from '../pages/dashboard/faq';
 import Subscription from '../pages/dashboard/package';
+import PrivateRoute from '../provider/PrivateRoutes';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <App />,
+        element: <PrivateRoute>
+            <App />
+        </PrivateRoute>,
         errorElement: <ErrorPage />,
         children: [
             { path: '', element: <Dashboard /> },

@@ -46,3 +46,18 @@ export interface ICategory {
     name: string;
     image: string;
 }
+
+export interface ISubscriptionPlan {
+    _id: string;
+    title: string;
+    description: string;
+    price: number;
+    duration: string;
+    paymentType: string;
+    productId: string;
+    paymentLink: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+}

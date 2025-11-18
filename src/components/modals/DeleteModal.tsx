@@ -6,9 +6,10 @@ interface DeleteCategoryModalProps {
     open: boolean;
     onCancel: () => void;
     onConfirm: () => void;
+    confirmLoading?: boolean;
 }
 
-const DeleteModal = ({ open, onCancel, onConfirm }: DeleteCategoryModalProps) => {
+const DeleteModal = ({ open, onCancel, onConfirm, confirmLoading }: DeleteCategoryModalProps) => {
     return (
         <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
             <Modal
@@ -19,6 +20,7 @@ const DeleteModal = ({ open, onCancel, onConfirm }: DeleteCategoryModalProps) =>
                 onCancel={onCancel}
                 okText="Delete"
                 okButtonProps={{ danger: true }}
+                confirmLoading={confirmLoading}
             >
                 <p>Are you sure you want to delete this item?</p>
             </Modal>

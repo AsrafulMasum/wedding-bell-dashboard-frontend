@@ -4,61 +4,96 @@ import { useState } from 'react';
 import { Button, ConfigProvider, Table, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
-import { CategoryTypes } from '../../../types/types';
 import { MdOutlineDeleteOutline } from 'react-icons/md';
 import { FiEdit } from 'react-icons/fi';
-import AddEditCategoryModal from '../../../components/modals/AddEditCategoryModal';
+import AddEditCategoryModal, { CategoryFormValues } from '../../../components/modals/AddEditCategoryModal';
 import DeleteModal from '../../../components/modals/DeleteModal';
-import { useCreateCategoryMutation, useGetCategoriesQuery } from '../../../redux/apiSlices/categorySlice';
+import {
+    useCreateCategoryMutation,
+    useDeleteCategoryMutation,
+    useGetCategoriesQuery,
+    useUpdateCategoryMutation,
+} from '../../../redux/apiSlices/categorySlice';
 import { imageUrl } from '../../../redux/api/baseApi';
-
-export const categoryData: CategoryTypes[] = [
-    { key: '1', categoryName: 'Italian Cuisine', totalDishes: 45 },
-    { key: '2', categoryName: 'Chinese Delights', totalDishes: 38 },
-    { key: '3', categoryName: 'Indian Spices', totalDishes: 52 },
-    { key: '4', categoryName: 'Mexican Fiesta', totalDishes: 41 },
-];
+import { ICategory } from '../../../types/types';
 
 export default function Category({ dashboard }: { dashboard?: boolean }) {
-    const { data } = useGetCategoriesQuery({})
-    const [createCategory] = useCreateCategoryMutation();
-    const categoryList = data?.data;
+    const { data, isFetching, refetch } = useGetCategoriesQuery({});
+    const categoryList = data?.data ?? [];
+
+    const [createCategory, { isLoading: isCreating }] = useCreateCategoryMutation();
+    const [deleteCategory, { isLoading: isDeleting }] = useDeleteCategoryMutation();
+    const [updateCategory ] = useUpdateCategoryMutation();
 
     // modal states
     const [isAddEditModalOpen, setIsAddEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [editingItem, setEditingItem] = useState<CategoryTypes | null>(null);
+    const [editingItem, setEditingItem] = useState<ICategory | null>(null);
     const [deletingKey, setDeletingKey] = useState<string | null>(null);
+    
 
-    const handleAddEditSubmit = (values: Partial<CategoryTypes>) => {
-        if (editingItem) {
-            const updated = categoryList.map((item) =>
-                item.key === editingItem.key ? { ...item, ...values } : item
-            );
-            setCategoryList(updated);
-            message.success('Updated successfully!');
-        } else {
-            const newItem: CategoryTypes = {
-                key: Date.now().toString(),
-                categoryName: values.categoryName || '',
-                totalDishes: values.totalDishes || 0,
-            };
-            setCategoryList([...categoryList, newItem]);
-            message.success('Added successfully!');
+    const handleAddEditSubmit = async (values: CategoryFormValues) => {
+        if (!values.categoryName) {
+            message.error('Please enter a category name');
+            return;
         }
-        setIsAddEditModalOpen(false);
-        setEditingItem(null);
+
+        if (editingItem) {
+            // Editing: PATCH as FormData to updateCategory
+            const formData = new FormData();
+            formData.append('name', values.categoryName.trim());
+            const imageFile = values.image?.[0]?.originFileObj as File | undefined;
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+            try {
+                await updateCategory({ id: editingItem._id, data: formData }).unwrap();
+                message.success('Updated successfully!');
+                refetch();
+                setIsAddEditModalOpen(false);
+                setEditingItem(null);
+            } catch (error: any) {
+                const errorMessage = error?.data?.message ?? 'Failed to update category';
+                message.error(errorMessage);
+            }
+            return;
+        }
+
+        // Add (Create): POST as individual fields handled in mutation
+        const imageFile = values.image?.[0]?.originFileObj as File | undefined;
+        if (!imageFile) {
+            message.error('Please upload an image');
+            return;
+        }
+
+        try {
+            await createCategory({ name: values.categoryName.trim(), image: imageFile }).unwrap();
+            message.success('Added successfully!');
+            refetch();
+            setIsAddEditModalOpen(false);
+            setEditingItem(null);
+        } catch (error: any) {
+            const errorMessage = error?.data?.message ?? 'Failed to add category';
+            message.error(errorMessage);
+        }
     };
 
-    const handleDeleteConfirm = () => {
-        const updated = categoryList.filter((item) => item.key !== deletingKey);
-        setCategoryList(updated);
-        setIsDeleteModalOpen(false);
-        setDeletingKey(null);
-        message.success('Deleted successfully!');
+    const handleDeleteConfirm = async () => {
+        if (!deletingKey) return;
+        try {
+            await deleteCategory({ id: deletingKey }).unwrap();
+            message.success('Deleted successfully!');
+            refetch();
+        } catch (error: any) {
+            const errorMessage = error?.data?.message ?? 'Failed to delete category';
+            message.error(errorMessage);
+        } finally {
+            setIsDeleteModalOpen(false);
+            setDeletingKey(null);
+        }
     };
 
-    const columns: ColumnsType<CategoryTypes> = [
+    const columns: ColumnsType<ICategory> = [
         {
             title: 'Serial No.',
             dataIndex: 'index',
@@ -101,7 +136,7 @@ export default function Category({ dashboard }: { dashboard?: boolean }) {
                         icon={<MdOutlineDeleteOutline size={24} />}
                         className="text-red-500"
                         onClick={() => {
-                            setDeletingKey(record.key);
+                            setDeletingKey(record._id);
                             setIsDeleteModalOpen(true);
                         }}
                     />
@@ -117,7 +152,10 @@ export default function Category({ dashboard }: { dashboard?: boolean }) {
 
                 <button
                     className="bg-primary h-10 px-4 rounded-md text-white text-sm font-semibold"
-                    onClick={() => setIsAddEditModalOpen(true)}
+                    onClick={() => {
+                        setEditingItem(null);
+                        setIsAddEditModalOpen(true);
+                    }}
                 >
                     Add Category
                 </button>
@@ -128,21 +166,27 @@ export default function Category({ dashboard }: { dashboard?: boolean }) {
                     columns={columns}
                     dataSource={categoryList}
                     pagination={dashboard ? false : { pageSize: 9 }}
-                    rowKey="key"
+                    rowKey="_id"
+                    loading={isFetching}
                 />
             </ConfigProvider>
 
             <AddEditCategoryModal
                 open={isAddEditModalOpen}
-                onCancel={() => setIsAddEditModalOpen(false)}
+                onCancel={() => {
+                    setIsAddEditModalOpen(false);
+                    setEditingItem(null);
+                }}
                 onSubmit={handleAddEditSubmit}
                 editingItem={editingItem}
+                confirmLoading={isCreating}
             />
 
             <DeleteModal
                 open={isDeleteModalOpen}
                 onCancel={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleDeleteConfirm}
+                confirmLoading={isDeleting}
             />
         </div>
     );

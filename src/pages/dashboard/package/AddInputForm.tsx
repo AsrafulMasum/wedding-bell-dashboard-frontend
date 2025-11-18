@@ -1,28 +1,22 @@
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, ConfigProvider, Form, Input } from "antd";
-import { SubscriptionType } from ".";
+import { ConfigProvider, Form, Input, Select, Button } from "antd";
+import type { PlanFormValues } from ".";
 
 interface AddInputFormProps {
   setOpenAddModel: (v: boolean) => void;
-  handleAdd: (pkg: SubscriptionType) => void;
+  handleAdd: (values: PlanFormValues) => void;
 }
 
 const AddInputForm: React.FC<AddInputFormProps> = ({
   setOpenAddModel,
   handleAdd,
 }) => {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<PlanFormValues>();
 
-  const onFinish = (values: any) => {
-    const newData: SubscriptionType = {
-      id: Date.now().toString(),
-      name: values.name,
-      duration: values.duration,
+  const onFinish = (values: PlanFormValues) => {
+    handleAdd({
+      ...values,
       price: Number(values.price),
-      features: values.features,
-    };
-
-    handleAdd(newData);
+    });
     form.resetFields();
     setOpenAddModel(false);
   };
@@ -36,54 +30,61 @@ const AddInputForm: React.FC<AddInputFormProps> = ({
       }}
     >
       <Form form={form} onFinish={onFinish} layout="vertical">
-        <Form.Item name="name" label="Package Name" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-
         <Form.Item
-          name="duration"
-          label="Package Duration"
-          rules={[{ required: true }]}
+          name="title"
+          label="Plan Title"
+          rules={[{ required: true, message: "Please enter a title" }]}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item name="price" label="Price" rules={[{ required: true }]}>
+        <Form.Item
+          name="description"
+          label="Description"
+          rules={[{ required: true, message: "Please enter a description" }]}
+        >
+          <Input.TextArea rows={3} />
+        </Form.Item>
+
+        <Form.Item
+          name="price"
+          label="Price"
+          rules={[{ required: true, message: "Please enter a price" }]}
+        >
           <Input type="number" />
         </Form.Item>
 
-        {/* Dynamic Fields */}
-        <Form.List name="features">
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map((field) => (
-                <div key={field.key} className="flex items-center gap-3 mb-2">
-                  <Form.Item
-                    {...field}
-                    rules={[{ required: true, message: "Enter feature" }]}
-                    className="flex-1"
-                  >
-                    <Input placeholder="Feature" />
-                  </Form.Item>
+        <Form.Item
+          name="duration"
+          label="Duration"
+          rules={[{ required: true, message: "Please select a duration" }]}
+        >
+          <Select
+            placeholder="Select duration"
+            options={[
+              { label: "Select one", value: "", disabled: true },
+              { label: "1 month", value: "1 month" },
+              { label: "3 months", value: "3 months" },
+              { label: "6 months", value: "6 months" },
+              { label: "1 year", value: "1 year" },
+            ]}
+          />
+        </Form.Item>
 
-                  <MinusCircleOutlined
-                    className="text-red-600"
-                    onClick={() => remove(field.name)}
-                  />
-                </div>
-              ))}
-
-              <Button
-                type="dashed"
-                onClick={() => add()}
-                icon={<PlusOutlined />}
-                style={{ width: "100%" }}
-              >
-                Add Feature
-              </Button>
-            </>
-          )}
-        </Form.List>
+        <Form.Item
+          name="paymentType"
+          label="Payment Type"
+          rules={[{ required: true, message: "Please select a payment type" }]}
+        >
+          <Select
+            placeholder="Select type"
+            options={[
+              { label: "Select type", value: "", disabled: true },
+              { label: "Monthly", value: "Monthly" },
+              { label: "Yearly", value: "Yearly" },
+            ]}
+          />
+        </Form.Item>
 
         <Button
           type="primary"

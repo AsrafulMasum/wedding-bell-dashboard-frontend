@@ -4,11 +4,11 @@ import sidebarItems from '../../utils/sidebarItems';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ReactNode, useState } from 'react';
 import { LogOut } from 'lucide-react';
+import { handleLogout } from '../../services/auth.service';
 
 const Sidebar = () => {
     const location = useLocation();
     const [openKeys, setOpenKeys] = useState<string[]>([]);
-    const navigate = useNavigate();
 
     const handleOpenChange = (keys: string[]) => {
         setOpenKeys(keys);
@@ -80,7 +80,7 @@ const Sidebar = () => {
                 <div className="py-3 ps-4 absolute bottom-0 w-full bg-[#FFFDFB]">
                     <button
                         onClick={() => {
-                            navigate('/login');
+                            handleLogout()
                         }}
                         className="w-full flex items-center gap-3 px-4 text-[#F44336] font-semibold rounded-md transition"
                     >

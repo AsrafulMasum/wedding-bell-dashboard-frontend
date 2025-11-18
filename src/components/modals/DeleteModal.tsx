@@ -1,5 +1,3 @@
-'use client';
-
 import { ConfigProvider, Modal } from 'antd';
 
 interface DeleteCategoryModalProps {

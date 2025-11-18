@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { Button, ConfigProvider, Table, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';

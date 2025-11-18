@@ -57,7 +57,6 @@ const AddEditCategoryModal = ({
 
     const normFile = (e: any) => (Array.isArray(e) ? e : e?.fileList);
 
-
     return (
         <ConfigProvider theme={{ token: { colorPrimary: '#C8A284' } }}>
             <Modal

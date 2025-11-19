@@ -1,14 +1,14 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useProfileQuery } from "../redux/apiSlices/authSlice";
- 
 
-const PrivateRoute = ({ children }:{children:React.ReactNode}) => {
-  const location = useLocation(); 
 
-  const { data:profile, isLoading, isFetching, isError } =useProfileQuery(undefined)  
+const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+  const location = useLocation();
+
+  const { data: profile, isLoading, isFetching, isError } = useProfileQuery(undefined)
 
   console.log(profile)
-  
+
   if (isLoading || isFetching) {
     return <div>Loading...</div>;
   }
@@ -18,10 +18,10 @@ const PrivateRoute = ({ children }:{children:React.ReactNode}) => {
   }
 
   if (profile?.data?.role === "ADMIN" || profile?.data?.role === "SUPER_ADMIN") {
-    return children; 
+    return children;
   }
 
-  
+
   return <Navigate to="/login" />;
 };
 

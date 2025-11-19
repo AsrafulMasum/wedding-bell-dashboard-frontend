@@ -14,6 +14,7 @@ const App: React.FC = () => {
      const {data:userReviewStaticts} = useGetEarningStatisticsQuery({});
      const {data:userSubscriptionStaticts} = useGetSubscriptionStatisticsQuery({});
 
+
      console.log({data})
     const StatCard: React.FC<{ icon: React.ReactNode; title: string; value: string }> = ({ icon, title, value }) => (
         <div className="rounded-lg shadow-sm border border-gray-200 p-2 2xl:p-4">
@@ -145,7 +146,7 @@ const App: React.FC = () => {
                 </div>
 
                 {/* Users */}
-                <TotalUserChart userStaticts={userStaticts ? [userStaticts] : []} />
+                <TotalUserChart userStaticts={userStaticts as any} />
                 {/* Revenue Chart */}
                 <TotalEarning  earning={userReviewStaticts as any}/>
                 <TotalSubscriberChart  subscriptions={userSubscriptionStaticts as any} /> 

@@ -1,21 +1,22 @@
 import { ConfigProvider, Input, Table, Tag } from 'antd';
 import { useState } from 'react';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
-import { useGetCustomersQuery } from '../../../redux/apiSlices/customerSlice';
+import { useGetVendorsQuery } from '../../../redux/apiSlices/customerSlice';
 import type { ICustomer } from '../../../types/types';
 
-export default function Users({ dashboard }: { dashboard?: boolean }) {
+export default function Vendors({ dashboard }: { dashboard?: boolean }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(2); // Default page size
+    const [limit, setLimit] = useState(10); // Default page size
 
     const query = {
         page,
         limit,
         searchTerm,
     };
-    const { data, isFetching } = useGetCustomersQuery(query as {});
-    const filteredCustomers = data?.data ?? [];
+
+    const { data, isFetching } = useGetVendorsQuery(query as {});
+    const filteredVendors: ICustomer[] = data?.data ?? [];
     const pagination = data?.pagination;
 
     const columns = [
@@ -26,12 +27,12 @@ export default function Users({ dashboard }: { dashboard?: boolean }) {
             width: 60,
         },
         {
-            title: 'Name',
+            title: 'Vendor Name',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: 'Email',
+            title: 'Vendor Email',
             dataIndex: 'email',
             key: 'email',
             responsive: ['md'] as any,
@@ -82,7 +83,7 @@ export default function Users({ dashboard }: { dashboard?: boolean }) {
     return (
         <div className="rounded-lg shadow-sm border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
-                <HeaderTitle title="Customers" />
+                <HeaderTitle title="Vendors" />
                 <Input
                     placeholder="Search by name, email or phone"
                     style={{ width: 280, height: 40 }}
@@ -100,7 +101,7 @@ export default function Users({ dashboard }: { dashboard?: boolean }) {
             >
                 <Table
                     columns={columns}
-                    dataSource={filteredCustomers}
+                    dataSource={filteredVendors}
                     loading={isFetching}
                     pagination={
                         dashboard

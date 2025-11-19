@@ -22,6 +22,7 @@ const CustomLegend = () => {
 
 const TotalUserChart = ({ userStaticts }: { userStaticts: IUserStatistics[] }) => {
 
+
     return (
         <div>
             <Card className="mb-4 rounded-lg shadow-sm border border-gray-200">

@@ -20,6 +20,17 @@ const userSlice = api.injectEndpoints({
             },
         }),
 
+        updateProfile: builder.mutation({
+            query: (formData: FormData) => {
+                return {
+                    method: "PATCH",
+                    url: "/user",
+                    body: formData,
+                    formData: true,
+                };
+            },
+        }),
+
         getHosts: builder.query({
             query: ({query}:{query?:string}) => {
                 return {
@@ -29,4 +40,4 @@ const userSlice = api.injectEndpoints({
         }),
     }),
 });
-export const {useGetUsersQuery, useChangeStatusUserMutation,useGetHostsQuery} = userSlice;
+export const {useGetUsersQuery, useChangeStatusUserMutation,useGetHostsQuery,useUpdateProfileMutation} = userSlice;

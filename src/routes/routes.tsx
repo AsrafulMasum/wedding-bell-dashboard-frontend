@@ -20,6 +20,8 @@ import FAQ from '../pages/dashboard/faq';
 import Subscription from '../pages/dashboard/package';
 import PrivateRoute from '../provider/PrivateRoutes';
 import Orders from '../pages/dashboard/orders';
+import Subscribers from '../pages/dashboard/subscribers';
+import Vendors from '../pages/dashboard/vendors';
 
 const router = createBrowserRouter([
     {
@@ -35,6 +37,8 @@ const router = createBrowserRouter([
             { path: 'categories', element: <Category /> },
             // { path: 'chefs', element: <Category /> },
             { path: 'users', element: <Users /> },
+            { path: 'subscribers', element: <Subscribers /> },
+            { path: 'vendors', element: <Vendors /> },
             { path: 'transactions', element: <Transactions /> },
             { path: 'subscriptions', element: <Subscription /> },
             { path: 'profile', element: <Profile /> },

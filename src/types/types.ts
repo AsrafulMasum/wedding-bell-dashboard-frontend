@@ -293,3 +293,38 @@ export type CityType = {
     status: StatusType;
 };
  
+
+export type ICustomer = {
+    _id: string;
+    name: string;
+    role: "CUSTOMER";
+    email: string;
+    phone: string;
+    profile: string;
+    verified: boolean;
+    subscribe: boolean;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+    fcmToken: string;
+};
+
+export type ISubscribers = {
+    _id: string;
+    price: number;
+    vendor: {
+        _id: string;
+        name: string;
+        email: string;
+        profile: string;
+    };
+    plan: {
+        _id: string;
+        title: string;
+        price: number;
+        duration: string;
+    };
+    currentPeriodStart: string;
+    currentPeriodEnd: string;
+    status: "active" | "inactive";
+};

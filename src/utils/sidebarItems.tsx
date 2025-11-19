@@ -1,11 +1,11 @@
 import { TSidebarItem } from './generateSidebarItems';
-import { LuClipboardList, LuLayoutDashboard } from 'react-icons/lu';
+import { LuClipboardList, LuLayoutDashboard, LuUserCheck } from 'react-icons/lu';
 import { TbBook, TbUsers } from 'react-icons/tb';
-import { MdOutlineCategory, MdOutlinePayments } from 'react-icons/md';
-import { IoCalendarOutline, IoSettingsOutline } from 'react-icons/io5';
+import { MdOutlineCategory, MdOutlinePayments, MdPeopleOutline } from 'react-icons/md';
+import { IoSettingsOutline } from 'react-icons/io5';
 import { FaRegCircleQuestion } from 'react-icons/fa6';
 import { PiImagesSquare } from 'react-icons/pi';
-
+// IoCalendarOutline
 const sidebarItems: TSidebarItem[] = [
     {
         key: 'dashboard',
@@ -37,18 +37,24 @@ const sidebarItems: TSidebarItem[] = [
         path: 'users',
         icon: <TbUsers size={24} />,
     },
-    // {
-    //     key: 'drivers',
-    //     label: 'Subscribers',
-    //     path: 'drivers',
-    //     icon: <LuUserCheck size={24} />,
-    // },
     {
-        key: 'orders',
-        label: 'Bookings',
-        path: 'orders',
-        icon: <IoCalendarOutline size={24} />,
+        key: 'drivers',
+        label: 'Subscribers',
+        path: 'subscribers',
+        icon: <LuUserCheck size={24} />,
     },
+    {
+        key: 'vendors',
+        label: 'Vendors',
+        path: 'vendors',
+        icon: <MdPeopleOutline  size={24} />,
+    },
+    // {
+    //     key: 'orders',
+    //     label: 'Bookings',
+    //     path: 'orders',
+    //     icon: <IoCalendarOutline size={24} />,
+    // },
     {
         key: 'subscriptions',
         label: 'Subscriptions',

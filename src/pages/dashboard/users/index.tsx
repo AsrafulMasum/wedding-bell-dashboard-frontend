@@ -7,7 +7,7 @@ import type { ICustomer } from '../../../types/types';
 export default function Users({ dashboard }: { dashboard?: boolean }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(2); // Default page size
+    const [limit, setLimit] = useState(10); // Default page size
 
     const query = {
         page,
